@@ -176,8 +176,8 @@
   </div>
 
   <div id="view-toggle">
-    <button class="active" id="btn-grid">Griglia</button>
-    <button id="btn-list">Lista</button>
+    <button id="btn-grid">Griglia</button>
+    <button class="active" id="btn-list">Lista</button>
     <button id="btn-oggi-btn">Oggi</button>
   </div>
 
@@ -239,7 +239,7 @@ const API_KEY = 'AIzaSyBRoKXJaV84XCJezZvsZT33fz_5J2urTKM';
 let currentYear  = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 let allEvents    = [];
-let currentView  = 'grid';
+let currentView  = 'list';
 
 function updateLabel() {
   document.getElementById('cal-month-label').textContent = MESI[currentMonth] + ' ' + currentYear;
@@ -414,8 +414,16 @@ function renderList() {
     return;
   }
 
+  const oggi = new Date();
+  oggi.setHours(0,0,0,0);
+
   const grouped = {};
   allEvents.forEach(ev => {
+    const dataEv = new Date(ev.start.dateTime || ev.start.date);
+    dataEv.setHours(0,0,0,0);
+    // Mostra solo eventi da oggi in poi (nel mese corrente)
+    const isMeseCorrente = currentYear === new Date().getFullYear() && currentMonth === new Date().getMonth();
+    if (isMeseCorrente && dataEv < oggi) return;
     const key = new Date(ev.start.dateTime || ev.start.date)
       .toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' });
     if (!grouped[key]) grouped[key] = [];
@@ -469,12 +477,15 @@ document.getElementById('btn-next').addEventListener('click', () => {
 });
 document.getElementById('btn-oggi-btn').addEventListener('click', () => {
   currentYear = new Date().getFullYear(); currentMonth = new Date().getMonth();
+  currentView = 'list';
+  document.getElementById('btn-list').classList.add('active');
+  document.getElementById('btn-grid').classList.remove('active');
   updateLabel(); loadEvents();
 });
 document.getElementById('btn-grid').addEventListener('click', () => {
   currentView = 'grid';
-  document.getElementById('btn-grid').classList.add('active');
-  document.getElementById('btn-list').classList.remove('active');
+  document.getElementById('btn-list').classList.add('active');
+  document.getElementById('btn-grid').classList.remove('active');
   renderCurrent();
 });
 document.getElementById('btn-list').addEventListener('click', () => {
