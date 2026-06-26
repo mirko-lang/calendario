@@ -574,19 +574,27 @@ function renderOggi() {
     card.appendChild(iconDiv);
     card.appendChild(body);
 
-    // Icona allegato sulla card Oggi
+    // Pulsante allegato sulla card Oggi
     if (ev.attachments && ev.attachments.length) {
       const attBtn = document.createElement('a');
       attBtn.href = ev.attachments[0].fileUrl;
       attBtn.target = '_blank';
       attBtn.rel = 'noopener';
-      attBtn.title = ev.attachments[0].title || 'Apri allegato';
-      attBtn.style.cssText = 'flex-shrink:0;font-size:22px;line-height:1;text-decoration:none;opacity:.75;transition:opacity .15s;align-self:center;';
-      attBtn.onmouseover = () => attBtn.style.opacity = '1';
-      attBtn.onmouseout  = () => attBtn.style.opacity = '.75';
       const mime = ev.attachments[0].mimeType || '';
-      attBtn.textContent = mime.includes('image') ? '🖼️' : mime.includes('pdf') ? '📄' : '📎';
-      attBtn.addEventListener('click', e => e.stopPropagation()); // non aprire il popup
+      const icona = mime.includes('image') ? '🖼️' : mime.includes('pdf') ? '📄' : '📎';
+      attBtn.innerHTML = icona + '<span style="margin-left:4px;font-size:10px;font-weight:700;letter-spacing:.03em">APRI</span>';
+      attBtn.style.cssText = [
+        'flex-shrink:0','align-self:center','margin-left:auto',
+        'display:inline-flex','align-items:center','gap:2px',
+        'padding:5px 11px','border-radius:7px',
+        'background:#1a3a6b','color:white',
+        'font-size:15px','text-decoration:none',
+        'border:none','cursor:pointer',
+        'transition:background .15s','white-space:nowrap'
+      ].join(';');
+      attBtn.onmouseover = () => attBtn.style.background = '#12295a';
+      attBtn.onmouseout  = () => attBtn.style.background = '#1a3a6b';
+      attBtn.addEventListener('click', e => e.stopPropagation());
       card.appendChild(attBtn);
     }
 
@@ -674,19 +682,27 @@ function renderList() {
       row.appendChild(iconDiv);
       row.appendChild(body);
 
-      // Icona allegato sulla riga Mese
+      // Pulsante allegato sulla riga Mese
       if (ev.attachments && ev.attachments.length) {
         const attBtn = document.createElement('a');
         attBtn.href = ev.attachments[0].fileUrl;
         attBtn.target = '_blank';
         attBtn.rel = 'noopener';
-        attBtn.title = ev.attachments[0].title || 'Apri allegato';
-        attBtn.style.cssText = 'flex-shrink:0;font-size:20px;line-height:1;text-decoration:none;opacity:.72;transition:opacity .15s;align-self:center;margin-left:auto;padding-left:8px;';
-        attBtn.onmouseover = () => attBtn.style.opacity = '1';
-        attBtn.onmouseout  = () => attBtn.style.opacity = '.72';
         const mime = ev.attachments[0].mimeType || '';
-        attBtn.textContent = mime.includes('image') ? '🖼️' : mime.includes('pdf') ? '📄' : '📎';
-        attBtn.addEventListener('click', e => e.stopPropagation()); // non aprire il popup
+        const icona = mime.includes('image') ? '🖼️' : mime.includes('pdf') ? '📄' : '📎';
+        attBtn.innerHTML = icona + '<span style="margin-left:4px;font-size:10px;font-weight:700;letter-spacing:.03em">APRI</span>';
+        attBtn.style.cssText = [
+          'flex-shrink:0','align-self:center','margin-left:auto',
+          'display:inline-flex','align-items:center','gap:2px',
+          'padding:4px 9px','border-radius:6px',
+          'background:#1a3a6b','color:white',
+          'font-size:13px','text-decoration:none',
+          'border:none','cursor:pointer',
+          'transition:background .15s','white-space:nowrap'
+        ].join(';');
+        attBtn.onmouseover = () => attBtn.style.background = '#12295a';
+        attBtn.onmouseout  = () => attBtn.style.background = '#1a3a6b';
+        attBtn.addEventListener('click', e => e.stopPropagation());
         row.appendChild(attBtn);
       }
 
