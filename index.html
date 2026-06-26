@@ -17,6 +17,16 @@
     --verde: #2d7a3a; --arancio: #a33a00; --viola: #5c2d91;
     --grigio: #5a5a5a; --testo: #1c1c1c; --testo-sec: #5a5a5a;
     --bordo: #d0daea; --radius: 10px;
+
+    /* Bande colorate trasparenti — Oggi e Mese */
+    --bg-festivita:  rgba(255, 210,  50, 0.18);
+    --bg-messe:      rgba( 26,  58, 107, 0.12);
+    --bg-preghiera:  rgba(  0, 160, 200, 0.14);
+    --bg-fraternita: rgba( 45, 160,  80, 0.15);
+    --bg-catechismo: rgba(100, 180,  40, 0.16);
+    --bg-caritas:    rgba(120,  40, 180, 0.13);
+    --bg-tempo:      rgba(210,  90,   0, 0.14);
+    --bg-info:       rgba( 80,  80,  80, 0.08);
   }
 
   /* WRAPPER: si adatta alla larghezza dell'iframe */
@@ -127,14 +137,14 @@
     gap: 1rem;
   }
   .oggi-card:hover { box-shadow: 0 4px 18px rgba(26,58,107,0.14); transform: translateY(-1px); }
-  .oggi-card.festività  { border-left-color: #b8860b; }
-  .oggi-card.messe      { border-left-color: var(--blu); }
-  .oggi-card.preghiera  { border-left-color: #1a6b5a; }
-  .oggi-card.fraternita { border-left-color: #3a1a6b; }
-  .oggi-card.catechismo { border-left-color: var(--arancio); }
-  .oggi-card.caritas    { border-left-color: var(--verde); }
-  .oggi-card.tempo      { border-left-color: var(--viola); }
-  .oggi-card.info       { border-left-color: #444; }
+  .oggi-card.festività  { border-left-color: var(--brd-festivita);  background: var(--bg-festivita); }
+  .oggi-card.messe      { border-left-color: var(--brd-messe);      background: var(--bg-messe); }
+  .oggi-card.preghiera  { border-left-color: var(--brd-preghiera);  background: var(--bg-preghiera); }
+  .oggi-card.fraternita { border-left-color: var(--brd-fraternita); background: var(--bg-fraternita); }
+  .oggi-card.catechismo { border-left-color: var(--brd-catechismo); background: var(--bg-catechismo); }
+  .oggi-card.caritas    { border-left-color: var(--brd-caritas);    background: var(--bg-caritas); }
+  .oggi-card.tempo      { border-left-color: var(--brd-tempo);      background: var(--bg-tempo); }
+  .oggi-card.info       { border-left-color: var(--brd-info);       background: var(--bg-info); }
 
   .oggi-card-icon { font-size: 32px; flex-shrink: 0; line-height: 1; }
   .oggi-card-body { flex: 1; min-width: 0; }
@@ -176,15 +186,15 @@
     border-radius: 8px; cursor: pointer; transition: background .1s; margin-bottom: 4px;
     border-left: 3px solid transparent;
   }
-  .list-event:hover { background: var(--blu-light); }
-  .list-event.festività  { border-left-color: #b8860b; }
-  .list-event.messe      { border-left-color: var(--blu); }
-  .list-event.preghiera  { border-left-color: #1a6b5a; }
-  .list-event.fraternita { border-left-color: #3a1a6b; }
-  .list-event.catechismo { border-left-color: var(--arancio); }
-  .list-event.caritas    { border-left-color: var(--verde); }
-  .list-event.tempo      { border-left-color: var(--viola); }
-  .list-event.info       { border-left-color: #444; }
+  .list-event:hover { filter: brightness(0.94); }
+  .list-event.festività  { border-left-color: var(--brd-festivita);  background: var(--bg-festivita); }
+  .list-event.messe      { border-left-color: var(--brd-messe);      background: var(--bg-messe); }
+  .list-event.preghiera  { border-left-color: var(--brd-preghiera);  background: var(--bg-preghiera); }
+  .list-event.fraternita { border-left-color: var(--brd-fraternita); background: var(--bg-fraternita); }
+  .list-event.catechismo { border-left-color: var(--brd-catechismo); background: var(--bg-catechismo); }
+  .list-event.caritas    { border-left-color: var(--brd-caritas);    background: var(--bg-caritas); }
+  .list-event.tempo      { border-left-color: var(--brd-tempo);      background: var(--bg-tempo); }
+  .list-event.info       { border-left-color: var(--brd-info);       background: var(--bg-info); }
 
   .list-event-icon { font-size: 22px; flex-shrink: 0; line-height: 1; margin-top: 1px; }
   .list-event-body { flex: 1; min-width: 0; }
