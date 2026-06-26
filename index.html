@@ -446,7 +446,8 @@ async function loadEvents() {
         + `?key=${API_KEY}`
         + `&timeMin=${encodeURIComponent(start)}`
         + `&timeMax=${encodeURIComponent(end)}`
-        + `&singleEvents=true&orderBy=startTime&maxResults=250&supportsAllDrives=true`;
+        + `&singleEvents=true&orderBy=startTime&maxResults=250&supportsAllDrives=true`
+        + `&fields=items(id,summary,description,start,end,location,attachments)`;
       return fetch(url).then(r => r.json()).then(data => {
         if (data.error) return [];
         return (data.items || []).map(ev => ({ ...ev, _classe: cal.classe, _calNome: cal.nome, _icon: cal.icon }));
