@@ -154,14 +154,6 @@
     font-size: 12px; color: var(--testo-sec); margin-top: .25rem;
     display: flex; align-items: flex-start; gap: 4px; line-height: 1.4;
   }
-  .oggi-card.concluso {
-    opacity: 0.52;
-    filter: grayscale(30%);
-  }
-  .oggi-card.concluso .oggi-card-orario {
-    text-decoration: line-through;
-    text-decoration-thickness: 2px;
-  }
 
   /* ══════════════════════════════════════════
      VISTA MESE (ex Lista)
@@ -536,7 +528,7 @@ function renderOggi() {
     const concluso = endDt && endDt < adesso && !!ev.end.dateTime; // solo se ha orario preciso
 
     const card = document.createElement('div');
-    card.className = 'oggi-card ' + ev._classe + (concluso ? ' concluso' : '');
+    card.className = 'oggi-card ' + ev._classe;
 
     const iconDiv = document.createElement('div');
     iconDiv.className = 'oggi-card-icon';
@@ -547,8 +539,11 @@ function renderOggi() {
 
     const orario = document.createElement('div');
     const tuttoGiorno = isTuttoIlGiorno(ev);
-    orario.className = 'oggi-card-orario' + (tuttoGiorno ? ' tutto-giorno' : '');
-    orario.textContent = tuttoGiorno ? 'Tutto il giorno' : fmtOra(ev.start);
+    if (!tuttoGiorno) {
+      orario.className = 'oggi-card-orario';
+      orario.textContent = fmtOra(ev.start);
+      body.appendChild(orario);
+    }
 
     const titolo = document.createElement('div');
     titolo.className = 'oggi-card-titolo';
@@ -627,15 +622,17 @@ function renderList() {
       body.className = 'list-event-body';
 
       const tuttoGiorno = isTuttoIlGiorno(ev);
-      const orario = document.createElement('div');
-      orario.className = 'list-event-orario' + (tuttoGiorno ? ' tutto-giorno' : '');
-      orario.textContent = tuttoGiorno ? 'Tutto il giorno' : fmtOra(ev.start);
+      if (!tuttoGiorno) {
+        const orario = document.createElement('div');
+        orario.className = 'list-event-orario';
+        orario.textContent = fmtOra(ev.start);
+        body.appendChild(orario);
+      }
 
       const titolo = document.createElement('div');
       titolo.className = 'list-event-title';
       titolo.textContent = ev.summary || '(senza titolo)';
 
-      body.appendChild(orario);
       body.appendChild(titolo);
 
       if (ev.location) {
