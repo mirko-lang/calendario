@@ -5,35 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fascicolo Archivio Digitale - UP Meloncello-Ravone</title>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --blu-scuro:  #003366;
-            --blu-medio:  #0059A0;
             --blu-chiaro: #0066ff;
-            --oro:        #b8860b;
-            --oro-bg:     #fef3c7;
-            --oro-bordo:  #fde68a;
             --bg:         #f6f9fc;
             --testo:      #1c2e3c;
             --muted:      #5c6f84;
             --bordo:      #d2dbdb;
-            --verde:      #15803d;
-            --verde-bg:   #f0fdf4;
-            --rosso:      #b91c1c;
-            --rosso-bg:   #fff3f3;
         }
         * { box-sizing: border-box; }
         body {
             font-family: 'Titillium Web', sans-serif;
             background: var(--bg); margin: 0;
             color: var(--testo);
-            height: 100vh; height: 100dvh;
+            min-height: 100vh;
             display: flex; flex-direction: column;
-            overflow: hidden;
         }
 
-        /* ===== HEADER ===== */
+        /* HEADER */
         .header { background: var(--blu-scuro); color: #fff; padding: 22px 0 0 0; flex-shrink: 0; }
         .header-inner {
             padding: 0 5% 18px 5%;
@@ -44,30 +34,30 @@
         .header-testo h1 { font-size: 2rem; font-weight: 700; margin: 0; letter-spacing: -0.5px; }
         .header-testo p  { font-size: 1rem; margin: 4px 0 0 0; opacity: 0.85; font-weight: 300; }
 
-        /* ===== VISTE ===== */
-        .vista { display: none; flex: 1; overflow: hidden; }
-        .vista.attiva { display: flex; }
-
-        /* ===================================================
-           VISTA 1 — LOGIN
-        =================================================== */
-        #v-login {
-            flex-direction: row; align-items: stretch;
-            height: calc(100vh - 98px);
+        /* LAYOUT DUE COLONNE */
+        .split {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: stretch;
         }
 
-        .login-sx {
-            flex: 1; background: var(--blu-chiaro); color: #fff;
-            padding: 60px 7%; display: flex; flex-direction: column; justify-content: center;
+        /* SINISTRA BLU */
+        .split-sx {
+            background: var(--blu-chiaro);
+            color: #fff;
+            padding: 60px 7%;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .login-sx img { max-width: 150px; border-radius: 4px; margin-bottom: 30px; }
-        .login-sx h2  { font-size: 1.9rem; font-weight: 600; line-height: 1.45; margin: 0 0 18px 0; }
-        .login-sx p   { font-size: 1rem; opacity: 0.82; line-height: 1.6; margin: 0; font-weight: 300; }
-        .login-credits { margin-top: 40px; font-size: 0.78rem; opacity: 0.55; }
+        .split-sx img { max-width: 160px; border-radius: 4px; margin-bottom: 30px; }
+        .split-sx h2  { font-size: 1.9rem; font-weight: 600; line-height: 1.45; margin: 0 0 18px 0; }
+        .split-sx p   { font-size: 1rem; opacity: 0.82; line-height: 1.6; margin: 0; font-weight: 300; }
+        .credits { margin-top: 40px; font-size: 0.78rem; opacity: 0.55; }
 
-        .login-dx {
-            flex: 1; display: flex; align-items: center;
-            justify-content: center; padding: 50px 7%; background: var(--bg);
+        /* DESTRA LOGIN */
+        .split-dx {
+            display: flex; align-items: center; justify-content: center;
+            padding: 50px 7%; background: var(--bg);
         }
         .login-card {
             background: #fff; border: 1px solid var(--bordo);
@@ -76,27 +66,23 @@
             text-align: center; box-shadow: 0 6px 24px rgba(0,0,0,0.07);
         }
         .lock-icon { width: 46px; height: 46px; fill: var(--blu-chiaro); margin-bottom: 16px; }
-        .login-card h2   { font-size: 1.75rem; font-weight: 700; color: var(--blu-scuro); margin: 0 0 10px 0; }
+        .login-card h2   { font-size: 1.75rem; font-weight: 700; color: var(--blu-scuro); margin: 0 0 12px 0; }
         .login-card .desc{ font-size: 0.97rem; color: var(--muted); line-height: 1.55; margin: 0 0 30px 0; }
 
+        /* PULSANTE GOOGLE */
         .btn-google {
             display: flex; align-items: center; justify-content: center; gap: 14px;
             width: 100%; padding: 13px 20px; background: #fff;
             border: 1.5px solid #dadce0; border-radius: 4px;
             font-family: 'Titillium Web', sans-serif; font-size: 1.02rem; font-weight: 600;
-            color: #3c4043; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
+            color: #3c4043; text-decoration: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         .btn-google:hover { border-color: var(--blu-chiaro); box-shadow: 0 1px 4px rgba(0,102,255,0.15); }
         .btn-google svg { width: 22px; height: 22px; flex-shrink: 0; }
 
-        .msg-errore {
-            display: none; margin-top: 18px; padding: 11px 15px;
-            background: var(--rosso-bg); border: 1px solid #f5c2c2;
-            border-radius: 4px; color: var(--rosso); font-size: 0.88rem; line-height: 1.4;
-        }
-        .msg-errore.vis { display: block; }
-
         .divider { height: 1px; background: var(--bordo); margin: 24px 0; }
+
         .link-sito {
             display: inline-flex; align-items: center; gap: 7px;
             font-size: 0.92rem; font-weight: 600; color: var(--blu-chiaro);
@@ -105,788 +91,70 @@
         .link-sito:hover { color: var(--blu-scuro); text-decoration: underline; }
         .link-sito svg { width: 14px; height: 14px; fill: currentColor; }
 
-        /* ===================================================
-           BARRA UTENTE (condivisa da dashboard e admin)
-        =================================================== */
-        .barra-utente {
-            flex-shrink: 0; background: var(--blu-scuro); color: #fff;
-            padding: 8px 5%; display: flex; align-items: center;
-            justify-content: space-between; gap: 12px;
-        }
-        .bu-sx { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; }
-        .avatar-ini {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: var(--blu-medio); border: 2px solid rgba(255,255,255,0.35);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.76rem; font-weight: 700; color: #fff; flex-shrink: 0;
-        }
-        .avatar-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); object-fit: cover; display: none; }
-        .bu-nome { font-weight: 600; }
-        .bu-mail { opacity: 0.62; font-size: 0.79rem; }
-        .bu-dx   { display: flex; align-items: center; gap: 8px; }
-
-        .badge-admin-bar {
-            display: inline-flex; align-items: center; gap: 5px;
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-            padding: 3px 10px; border-radius: 3px; letter-spacing: 0.4px;
-            background: var(--oro-bg); color: var(--oro); border: 1px solid var(--oro-bordo);
-        }
-        .badge-admin-bar svg { width: 12px; height: 12px; fill: none; stroke: var(--oro); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
-        .btn-barra {
-            display: flex; align-items: center; gap: 6px; padding: 5px 13px;
-            background: transparent; border: 1px solid rgba(255,255,255,0.28);
-            border-radius: 4px; color: #fff;
-            font-family: 'Titillium Web', sans-serif; font-size: 0.8rem; font-weight: 600;
-            cursor: pointer; transition: background 0.15s;
-        }
-        .btn-barra:hover { background: rgba(255,255,255,0.1); }
-        .btn-barra svg { width: 14px; height: 14px; fill: currentColor; }
-        .btn-barra-oro { border-color: rgba(184,134,11,0.5); color: var(--oro-bg); }
-        .btn-barra-oro:hover { background: rgba(184,134,11,0.15); }
-
-        /* ===================================================
-           VISTA 2 — DASHBOARD
-        =================================================== */
-        #v-dash { flex-direction: column; }
-
-        .dash-titolo-bar { flex-shrink: 0; padding: 14px 5% 0 5%; background: var(--bg); }
-        .sez-titolo {
-            font-size: 2rem; font-weight: 700; color: var(--blu-scuro);
-            margin: 0 0 14px 0; padding-bottom: 10px;
-            border-bottom: 3px solid var(--blu-chiaro); letter-spacing: -0.5px;
-        }
-
-        .scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .pg { padding: 16px 5% 50px 5%; }
-
-        .dash-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
-
-        /* Card normale */
-        .dcard {
-            background: #fff; border: 1px solid var(--bordo);
-            border-left: 4px solid var(--blu-chiaro); border-radius: 6px;
-            padding: 20px 18px; display: flex; align-items: flex-start; gap: 14px;
-            text-decoration: none; color: var(--testo);
-            transition: box-shadow 0.15s, transform 0.15s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03); cursor: pointer;
-        }
-        .dcard:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.08); transform: translateY(-2px); }
-
-        /* Card amministratore */
-        .dcard-admin { border-left-color: var(--oro); background: #fffdf5; cursor: pointer; }
-        .dcard-admin .dc-h3 { color: var(--oro) !important; }
-
-        .dc-icon {
-            flex-shrink: 0; width: 46px; height: 46px;
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-        }
-        .dc-icon svg { width: 25px; height: 25px; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-        .dc-h3 { font-size: 1.05rem; font-weight: 700; color: var(--blu-chiaro); margin: 0 0 5px 0; line-height: 1.2; }
-        .dc-p  { font-size: 0.86rem; color: var(--muted); margin: 0; line-height: 1.4; }
-        .badge-solo-admin {
-            display: inline-block; margin-top: 7px;
-            font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; padding: 2px 7px; border-radius: 3px;
-            background: var(--oro-bg); color: var(--oro); border: 1px solid var(--oro-bordo);
-        }
-
-        .stato-vuoto {
-            grid-column: 1/-1; text-align: center;
-            padding: 40px 20px; color: var(--muted); font-size: 1rem; line-height: 1.6;
-        }
-        .stato-vuoto strong { display: block; color: var(--blu-scuro); font-size: 1.1rem; margin-bottom: 8px; }
-        .load-msg { font-size: 1rem; color: var(--muted); padding: 20px 0; grid-column: 1/-1; }
-
-        /* ===================================================
-           VISTA 3 — ADMIN
-        =================================================== */
-        #v-admin { flex-direction: column; }
-
-        .admin-hbar { flex-shrink: 0; padding: 14px 5% 0 5%; background: var(--bg); }
-        .admin-titolo {
-            font-size: 1.85rem; font-weight: 700; color: var(--blu-scuro);
-            margin: 0 0 4px 0; padding-bottom: 10px;
-            border-bottom: 3px solid var(--oro); letter-spacing: -0.5px;
-        }
-        .admin-sub { font-size: 0.92rem; color: var(--muted); margin: 0 0 12px 0; line-height: 1.4; }
-
-        .azioni-bar {
-            flex-shrink: 0; padding: 0 5% 12px 5%;
-            background: var(--bg); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-        }
-        .btn-az {
-            display: flex; align-items: center; gap: 8px;
-            height: 38px; padding: 0 16px; border-radius: 4px;
-            font-family: 'Titillium Web', sans-serif; font-size: 0.83rem; font-weight: 700;
-            cursor: pointer; transition: background 0.15s; border: none;
-        }
-        .btn-az svg { width: 15px; height: 15px; flex-shrink: 0; }
-        .btn-salva { background: var(--blu-chiaro); color: #fff; border: 1px solid var(--blu-scuro) !important; }
-        .btn-salva:hover { background: var(--blu-scuro); }
-        .btn-salva svg { fill: currentColor; }
-        .btn-exp { background: #fff; color: var(--blu-scuro); border: 1px solid var(--bordo) !important; }
-        .btn-exp:hover { background: #f1f5f9; }
-        .btn-exp svg { fill: none; stroke: var(--blu-scuro); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-        .btn-imp { background: #fff; color: var(--verde); border: 1px solid var(--bordo) !important; }
-        .btn-imp:hover { background: var(--verde-bg); }
-        .btn-imp svg { fill: none; stroke: var(--verde); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-        #input-imp { display: none; }
-
-        .toast {
-            display: none; align-items: center; gap: 7px;
-            padding: 7px 14px; border-radius: 4px;
-            background: var(--verde-bg); border: 1px solid #86efac;
-            color: var(--verde); font-size: 0.86rem; font-weight: 600;
-        }
-        .toast.vis { display: flex; }
-        .toast svg { width: 15px; height: 15px; fill: none; stroke: var(--verde); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
-        .scroll-area-a { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .pg-a { padding: 4px 5% 50px 5%; }
-
-        .sett-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
-
-        /* Card settore admin */
-        .scard {
-            background: #fff; border: 1px solid var(--bordo);
-            border-left: 4px solid var(--blu-chiaro); border-radius: 6px;
-            padding: 18px; display: flex; flex-direction: column; gap: 12px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
-        }
-        .scard-head { display: flex; align-items: flex-start; gap: 10px; }
-        .scard-num {
-            flex-shrink: 0; font-size: 0.7rem; font-weight: 700;
-            padding: 3px 8px; border-radius: 3px; text-transform: uppercase;
-            letter-spacing: 0.4px; margin-top: 2px;
-        }
-        .scard-tit { font-size: 1.02rem; font-weight: 700; color: var(--blu-scuro); margin: 0; line-height: 1.25; }
-        .scard-sub { font-size: 0.8rem; color: var(--muted); margin: 2px 0 0 0; line-height: 1.3; }
-
-        .email-lista { display: flex; flex-direction: column; gap: 6px; }
-        .email-riga  { display: flex; align-items: center; gap: 7px; }
-        .email-inp {
-            flex: 1; height: 35px; padding: 0 10px;
-            border: 1px solid var(--bordo); border-radius: 4px;
-            font-family: 'Titillium Web', sans-serif; font-size: 0.86rem;
-            color: var(--testo); outline: none; transition: border-color 0.15s;
-        }
-        .email-inp:focus { border-color: var(--blu-chiaro); }
-        .email-inp.ok  { border-color: #86efac; background: #f0fdf4; }
-        .email-inp.ko  { border-color: #fca5a5; background: var(--rosso-bg); }
-
-        .btn-del {
-            flex-shrink: 0; width: 30px; height: 30px;
-            display: flex; align-items: center; justify-content: center;
-            background: transparent; border: 1px solid var(--bordo);
-            border-radius: 4px; cursor: pointer; color: var(--muted);
-            transition: background 0.15s, color 0.15s; padding: 0;
-        }
-        .btn-del:hover { background: var(--rosso-bg); border-color: #fca5a5; color: var(--rosso); }
-        .btn-del svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
-        .btn-add-email {
-            display: flex; align-items: center; gap: 7px;
-            width: 100%; height: 33px; padding: 0 10px;
-            background: transparent; border: 1px dashed var(--bordo);
-            border-radius: 4px; cursor: pointer; color: var(--muted);
-            font-family: 'Titillium Web', sans-serif; font-size: 0.8rem; font-weight: 600;
-            transition: background 0.15s, border-color 0.15s, color 0.15s;
-        }
-        .btn-add-email:hover { background: #eff6ff; border-color: var(--blu-chiaro); color: var(--blu-chiaro); }
-        .btn-add-email svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
-        .scard-cnt {
-            font-size: 0.73rem; color: var(--muted); text-align: right; margin-top: 2px;
-        }
-        .scard-cnt.ok { color: var(--verde); font-weight: 600; }
-
-        /* FOOTER */
-        .footer {
-            flex-shrink: 0; background: #fff; border-top: 1px solid var(--bordo);
-            padding: 10px 5%; display: flex; align-items: center;
-            justify-content: space-between; z-index: 100;
-        }
-        .footer-cr { font-size: 0.76rem; color: var(--muted); }
-        .btn-home {
-            display: flex; align-items: center; gap: 8px;
-            height: 40px; padding: 0 18px; background: var(--blu-chiaro);
-            color: #fff; text-decoration: none; border-radius: 4px;
-            font-family: 'Titillium Web', sans-serif; font-size: 0.83rem; font-weight: 700;
-            border: 1px solid var(--blu-scuro); transition: background 0.15s;
-        }
-        .btn-home:hover { background: var(--blu-scuro); }
-        .btn-home svg { width: 16px; height: 16px; fill: currentColor; }
-
         /* RESPONSIVE */
-        @media (max-width: 1300px) { .dash-grid { grid-template-columns: repeat(3,1fr); } }
-        @media (max-width: 1100px) { .sett-grid { grid-template-columns: repeat(2,1fr); } }
-        @media (max-width: 950px)  { .dash-grid { grid-template-columns: repeat(2,1fr); } }
-        @media (max-width: 750px)  {
-            #v-login { flex-direction: column; }
-            .login-sx { padding: 36px 6%; align-items: center; text-align: center; }
-            .login-sx h2 { font-size: 1.65rem; }
-            .login-dx { padding: 36px 6%; }
+        @media (max-width: 750px) {
+            .split { grid-template-columns: 1fr; }
+            .split-sx { padding: 36px 6%; align-items: center; text-align: center; }
+            .split-sx h2 { font-size: 1.65rem; }
+            .split-dx { padding: 36px 6%; }
             .header-testo h1 { font-size: 1.7rem; }
         }
-        @media (max-width: 650px)  { .sett-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 600px)  {
-            .dash-grid { grid-template-columns: 1fr; }
+        @media (max-width: 500px) {
             .login-card { padding: 36px 20px; }
-            .footer { flex-direction: column; gap: 8px; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 
-<!-- ===== HEADER ===== -->
-<div class="header">
-    <div class="header-inner">
-        <img src="https://lh3.googleusercontent.com/d/1dkfyLqhUgQ1L6mQx8oSzWM9gglSbuXvB" alt="Logo" class="header-logo" onerror="this.style.display='none'">
-        <div class="header-testo">
-            <h1>Fascicolo Archivio Digitale</h1>
-            <p>Unità Pastorale Meloncello - Ravone</p>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-inner">
+            <img src="https://lh3.googleusercontent.com/d/1dkfyLqhUgQ1L6mQx8oSzWM9gglSbuXvB" alt="Logo" class="header-logo" onerror="this.style.display='none'">
+            <div class="header-testo">
+                <h1>Fascicolo Archivio Digitale</h1>
+                <p>Unità Pastorale Meloncello - Ravone</p>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- ===================================================
-     VISTA 1 — LOGIN
-=================================================== -->
-<div class="vista attiva" id="v-login">
-    <div class="login-sx">
-        <img src="https://lh3.googleusercontent.com/d/1dkfyLqhUgQ1L6mQx8oSzWM9gglSbuXvB" alt="Logo" onerror="this.style.display='none'">
-        <h2>Benvenuti nell'area riservata ai collaboratori dell'Unità Pastorale Meloncello&nbsp;-&nbsp;Ravone</h2>
-        <p>Il Fascicolo Archivio Digitale raccoglie la documentazione interna per settore. L'accesso è possibile solo con account Google autorizzato.</p>
-        <div class="login-credits">© Creatore: Mirko Corsini</div>
-    </div>
-    <div class="login-dx">
-        <div class="login-card">
-            <svg class="lock-icon" viewBox="0 0 24 24">
-                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
-            </svg>
-            <h2>Accesso Riservato</h2>
-            <p class="desc">Utilizza il tuo account Google autorizzato per accedere al Fascicolo Archivio Digitale.</p>
-            <button class="btn-google" id="btn-login">
-                <svg viewBox="0 0 24 24">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    <!-- CORPO -->
+    <div class="split">
+
+        <div class="split-sx">
+            <img src="https://lh3.googleusercontent.com/d/1dkfyLqhUgQ1L6mQx8oSzWM9gglSbuXvB" alt="Logo" onerror="this.style.display='none'">
+            <h2>Benvenuti nell'area riservata ai collaboratori dell'Unità Pastorale Meloncello&nbsp;-&nbsp;Ravone</h2>
+            <p>Il Fascicolo Archivio Digitale raccoglie la documentazione interna per settore. L'accesso è possibile solo con account Google autorizzato.</p>
+            <div class="credits">© Creatore: Mirko Corsini</div>
+        </div>
+
+        <div class="split-dx">
+            <div class="login-card">
+                <svg class="lock-icon" viewBox="0 0 24 24">
+                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
                 </svg>
-                Accedi con Google
-            </button>
-            <div class="msg-errore" id="msg-err">
-                Il tuo account non è autorizzato. Contatta l'amministratore dell'Unità Pastorale.
-            </div>
-            <div class="divider"></div>
-            <a href="https://www.zonapastoralemera.org" target="_top" class="link-sito">
-                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-                Torna al Sito Parrocchiale
-            </a>
-        </div>
-    </div>
-</div>
+                <h2>Accesso Riservato</h2>
+                <p class="desc">L'accesso alla documentazione è riservato ai collaboratori dell'Unità Pastorale. Accedi con il tuo account Google autorizzato.</p>
 
-<!-- ===================================================
-     VISTA 2 — DASHBOARD
-=================================================== -->
-<div class="vista" id="v-dash">
-    <div class="barra-utente" id="bu-dash">
-        <div class="bu-sx">
-            <div class="avatar-ini" id="av-ini-d"></div>
-            <img class="avatar-img" id="av-img-d" alt="Avatar">
-            <div>
-                <div class="bu-nome" id="bu-nome-d"></div>
-                <div class="bu-mail" id="bu-mail-d"></div>
+                <a href="https://sites.google.com/zonapastoralemera.org/0002-fdup-home" target="_blank" class="btn-google">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Accedi con Google
+                </a>
+
+                <div class="divider"></div>
+
+                <a href="https://www.zonapastoralemera.org" target="_top" class="link-sito">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    Torna al Sito Parrocchiale
+                </a>
             </div>
         </div>
-        <div class="bu-dx">
-            <div class="badge-admin-bar" id="badge-admin-d" style="display:none;">
-                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77l-6.18 3.19L7 14.14 2 9.27l6.91-1.01z"/></svg>
-                Amministratore
-            </div>
-            <button class="btn-barra btn-barra-oro" id="btn-vai-admin" style="display:none;">
-                <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 0 0 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-                Gestione Accessi
-            </button>
-            <button class="btn-barra" id="btn-esci-d">
-                <svg viewBox="0 0 24 24"><path d="M10.09 15.59 11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5a2 2 0 0 0-2 2v4h2V5h14v14H5v-4H3v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
-                Esci
-            </button>
-        </div>
+
     </div>
-    <div class="dash-titolo-bar">
-        <div class="sez-titolo" id="dash-titolo">Caricamento...</div>
-    </div>
-    <div class="scroll-area">
-        <div class="pg">
-            <div class="dash-grid" id="dash-grid">
-                <div class="load-msg">Connessione al registro in corso...</div>
-            </div>
-        </div>
-    </div>
-    <div class="footer">
-        <div class="footer-cr">© Creatore: Mirko Corsini</div>
-        <a href="https://www.zonapastoralemera.org" target="_top" class="btn-home">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            HOME ISTITUZIONALE
-        </a>
-    </div>
-</div>
 
-<!-- ===================================================
-     VISTA 3 — ADMIN
-=================================================== -->
-<div class="vista" id="v-admin">
-    <div class="barra-utente" id="bu-admin">
-        <div class="bu-sx">
-            <div class="avatar-ini" id="av-ini-a" style="background:var(--oro);"></div>
-            <div>
-                <div class="bu-nome" id="bu-nome-a"></div>
-                <div class="bu-mail" id="bu-mail-a"></div>
-            </div>
-            <div class="badge-admin-bar">
-                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77l-6.18 3.19L7 14.14 2 9.27l6.91-1.01z"/></svg>
-                Amministratore
-            </div>
-        </div>
-        <div class="bu-dx">
-            <button class="btn-barra" id="btn-torna-dash">
-                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-                Dashboard
-            </button>
-            <button class="btn-barra" id="btn-esci-a">
-                <svg viewBox="0 0 24 24"><path d="M10.09 15.59 11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5a2 2 0 0 0-2 2v4h2V5h14v14H5v-4H3v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
-                Esci
-            </button>
-        </div>
-    </div>
-    <div class="admin-hbar">
-        <div class="admin-titolo">Gestione Autorizzazioni per Settore</div>
-        <div class="admin-sub">Per ogni settore inserisci le email degli utenti autorizzati. Clicca "Salva tutto" per confermare. Usa Esporta/Importa per trasferire le impostazioni su altri dispositivi.</div>
-    </div>
-    <div class="azioni-bar">
-        <button class="btn-az btn-salva" id="btn-salva">
-            <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" fill="currentColor"/><polyline points="17 21 17 13 7 13 7 21" stroke="white" stroke-width="1.5" fill="none"/><polyline points="7 3 7 8 15 8" stroke="white" stroke-width="1.5" fill="none"/></svg>
-            Salva tutto
-        </button>
-        <button class="btn-az btn-exp" id="btn-exp">
-            <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-            Esporta JSON
-        </button>
-        <label class="btn-az btn-imp" for="input-imp" style="cursor:pointer; display:flex; align-items:center; gap:8px;">
-            <svg viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5"/><path d="M5 3h14"/></svg>
-            Importa JSON
-        </label>
-        <input type="file" id="input-imp" accept=".json">
-        <div class="toast" id="toast">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            Autorizzazioni salvate
-        </div>
-    </div>
-    <div class="scroll-area-a">
-        <div class="pg-a">
-            <div class="sett-grid" id="sett-grid">
-                <div class="load-msg">Caricamento settori...</div>
-            </div>
-        </div>
-    </div>
-    <div class="footer">
-        <div class="footer-cr">© Creatore: Mirko Corsini</div>
-        <a href="https://www.zonapastoralemera.org" target="_top" class="btn-home">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            HOME ISTITUZIONALE
-        </a>
-    </div>
-</div>
-
-<script>
-/* ================================================================
-   CONFIGURAZIONE — sostituisci solo GOOGLE_CLIENT_ID
-================================================================ */
-const GOOGLE_CLIENT_ID = "TUO_CLIENT_ID.apps.googleusercontent.com";
-const SHEET_ID         = "1oG4pUJC8EGuG1kh-V8GQhaisFOmETHkiyimEC04Lyjg";
-const SHEET_FOGLIO     = "FOGLIO 1 -UP-DASH";
-const STORAGE_KEY      = "fad_autorizzazioni";
-const EMAIL_ADMIN      = ["mirko@zonapastoralemera.org", "mirko.corsini.bo@gmail.com"];
-
-/* ================================================================
-   STATO
-================================================================ */
-let utente         = null;   // { email, name, picture }
-let settoriVisib   = [];     // ["tutti"] oppure ["01","05",…]
-let isAdmin        = false;
-let settoriCaric   = [];     // [{num,titolo,sub,colore}] caricati dal foglio
-
-/* ================================================================
-   UTILITY
-================================================================ */
-function ini(nome) {
-    if (!nome) return "?";
-    const p = nome.trim().split(/\s+/);
-    return (p.length >= 2 ? p[0][0]+p[p.length-1][0] : p[0].substring(0,2)).toUpperCase();
-}
-function sfondo(c) {
-    const m = (c||"").trim().match(/^#?([0-9a-fA-F]{6})$/);
-    if (m) return 'rgba('+parseInt(m[1].substr(0,2),16)+','+parseInt(m[1].substr(2,2),16)+','+parseInt(m[1].substr(4,2),16)+',0.12)';
-    return '#eff3f7';
-}
-function emailOk(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim()); }
-
-/* ================================================================
-   STORAGE
-================================================================ */
-function leggi()       { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); } catch(e) { return {}; } }
-function salva(mappa)  { localStorage.setItem(STORAGE_KEY, JSON.stringify(mappa)); }
-
-/* ================================================================
-   ICONE
-================================================================ */
-function icona(t) {
-    t = (t||"").toLowerCase();
-    if (t.includes("zona")||t.includes("territorio"))
-        return '<svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>';
-    if (t.includes("contabil")||t.includes("amministra")||t.includes("bilanc"))
-        return '<svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M12 16V8"/><path d="M16 16v-3"/></svg>';
-    if (t.includes("gestione")||t.includes("patrimonio")||t.includes("manutenz"))
-        return '<svg viewBox="0 0 24 24"><rect x="3" y="9" width="8" height="11" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/><path d="M6 13h2M6 16h2M16 8h2M16 12h2M16 16h2"/></svg>';
-    if (t.includes("sacramenti")||t.includes("registro")||t.includes("storic"))
-        return '<svg viewBox="0 0 24 24"><path d="M5 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17l-7-3-7 3z"/></svg>';
-    if (t.includes("sagrestia")||t.includes("inventar"))
-        return '<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="4.5"/><path d="M11 11l8 8M16 16l2-2M14 18l2-2"/></svg>';
-    if (t.includes("liturgia")||t.includes("music")||t.includes("messa"))
-        return '<svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="15" r="3"/></svg>';
-    if (t.includes("catechesi")||t.includes("scuol")||t.includes("formaz"))
-        return '<svg viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-1.5-7 0v12c2-1.5 5-1.5 7 0M12 6c2-1.5 5-1.5 7 0v12c-2-1.5-5-1.5-7 0M12 6v14"/></svg>';
-    if (t.includes("caritas")||t.includes("aiut")||t.includes("ascolt"))
-        return '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 3.5C19 15.5 12 20 12 20z"/></svg>';
-    if (t.includes("pastorale")||t.includes("ragazzi")||t.includes("tempo libero"))
-        return '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>';
-    if (t.includes("segreteria")||t.includes("mail")||t.includes("corrispond"))
-        return '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
-    if (t.includes("teatro")||t.includes("siae")||t.includes("spettacol"))
-        return '<svg viewBox="0 0 24 24"><path d="M4 9V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 6v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-6z"/><path d="M14 7v10"/></svg>';
-    if (t.includes("foto")||t.includes("immagin")||t.includes("album"))
-        return '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7l2-3h4l2 3"/><circle cx="12" cy="13" r="3.5"/></svg>';
-    if (t.includes("digital")||t.includes("sito")||t.includes("credenz"))
-        return '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
-    if (t.includes("download")||t.includes("modulistic"))
-        return '<svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>';
-    return '<svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>';
-}
-
-/* ================================================================
-   AUTORIZZAZIONE
-================================================================ */
-function verificaEmail(email) {
-    if (!email) return null;
-    const e = email.toLowerCase();
-    if (EMAIL_ADMIN.includes(e)) return ["tutti"];
-    const mappa = leggi();
-    const trovati = [];
-    for (const [sett, emails] of Object.entries(mappa)) {
-        if (Array.isArray(emails) && emails.map(x=>x.toLowerCase()).includes(e))
-            trovati.push(sett);
-    }
-    return trovati.length > 0 ? trovati : null;
-}
-
-/* ================================================================
-   NAVIGAZIONE TRA VISTE
-================================================================ */
-function mostra(id) {
-    document.querySelectorAll('.vista').forEach(v => v.classList.remove('attiva'));
-    document.getElementById(id).classList.add('attiva');
-}
-
-function popolaBarra(suffisso) {
-    document.getElementById('av-ini-'+suffisso).textContent = ini(utente.name);
-    if (suffisso === 'd') {
-        document.getElementById('bu-nome-d').textContent = utente.name || "";
-        document.getElementById('bu-mail-d').textContent = utente.email || "";
-        if (utente.picture) {
-            const img = document.getElementById('av-img-d');
-            img.src = utente.picture; img.style.display = 'block';
-            document.getElementById('av-ini-d').style.display = 'none';
-        }
-        document.getElementById('badge-admin-d').style.display = isAdmin ? 'inline-flex' : 'none';
-        document.getElementById('btn-vai-admin').style.display  = isAdmin ? 'flex' : 'none';
-    } else {
-        document.getElementById('bu-nome-a').textContent = utente.name || "";
-        document.getElementById('bu-mail-a').textContent = utente.email || "";
-    }
-}
-
-/* ================================================================
-   DASHBOARD — carica box dal foglio
-================================================================ */
-async function caricaDashboard() {
-    const grid = document.getElementById('dash-grid');
-    grid.innerHTML = '<div class="load-msg">Connessione al registro in corso...</div>';
-    const url = 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=0&sheet='+encodeURIComponent(SHEET_FOGLIO);
-    try {
-        const raw  = await (await fetch(url)).text();
-        const json = JSON.parse(raw.substring(raw.indexOf("{"), raw.lastIndexOf("}")+1));
-        const rig  = json.table.rows;
-        grid.innerHTML = '';
-        if (!rig||!rig.length) { grid.innerHTML='<div class="load-msg">Nessun dato.</div>'; return; }
-
-        document.getElementById('dash-titolo').textContent =
-            (rig[0]?.c?.[0]?.v??'Dashboard Generale').toString().trim();
-
-        const tutti = settoriVisib.includes("tutti");
-        const nCol  = rig[1]?.c?.length||0;
-        let vis = 0;
-
-        for (let i=0; i<nCol; i++) {
-            const num  = (rig[1]?.c?.[i]?.v??'').toString().trim();
-            const tit  = (rig[2]?.c?.[i]?.v??'').toString().trim();
-            const sub  = (rig[3]?.c?.[i]?.v??'').toString().trim();
-            const col  = (rig[4]?.c?.[i]?.v??'').toString().trim();
-            let   lnk  = (rig[5]?.c?.[i]?.v??'').toString().trim();
-            if (!tit&&!num) continue;
-            if (!tutti && !settoriVisib.includes(num)) continue;
-            if (lnk&&lnk!=='#'&&!lnk.startsWith('http')) lnk='https://'+lnk;
-
-            const titoloC = num ? num+'. '+tit : tit;
-            const coloreC = col||'#0066ff';
-
-            const card = document.createElement('a');
-            card.className='dcard'; card.href=lnk||'#'; card.target='_blank';
-            card.style.borderLeftColor=coloreC;
-            const ico = icona(tit);
-            card.innerHTML =
-                '<div class="dc-icon" style="background:'+sfondo(coloreC)+';">'+
-                    '<span style="color:'+coloreC+';display:flex;">'+ico+'</span>'+
-                '</div>'+
-                '<div><p class="dc-h3">'+titoloC+'</p><p class="dc-p">'+(sub||'Nessuna descrizione.')+'</p></div>';
-            const s=card.querySelector('svg'); if(s){s.style.stroke=coloreC;s.style.fill='none';}
-            grid.appendChild(card); vis++;
-        }
-
-        /* Box admin — solo per amministratori */
-        if (isAdmin) {
-            const ca = document.createElement('div');
-            ca.className='dcard dcard-admin'; ca.style.cursor='pointer';
-            ca.innerHTML =
-                '<div class="dc-icon" style="background:rgba(184,134,11,0.12);">'+
-                    '<span style="color:var(--oro);display:flex;">'+
-                        '<svg viewBox="0 0 24 24" style="width:25px;height:25px;fill:none;stroke:var(--oro);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;">'+
-                            '<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>'+
-                            '<path d="M18 14l1.5 1.5L22 13"/></svg>'+
-                    '</span>'+
-                '</div>'+
-                '<div>'+
-                    '<p class="dc-h3" style="color:var(--oro);">Amministrazione Accessi</p>'+
-                    '<p class="dc-p">Gestisci le email autorizzate per ogni settore del Fascicolo.</p>'+
-                    '<span class="badge-solo-admin">SOLO AMMINISTRATORE</span>'+
-                '</div>';
-            ca.addEventListener('click', apriAdmin);
-            grid.appendChild(ca); vis++;
-        }
-
-        if (!vis) grid.innerHTML='<div class="stato-vuoto"><strong>Nessun settore disponibile</strong>Contatta l\'amministratore per richiedere i permessi.</div>';
-    } catch(e) {
-        grid.innerHTML='<div class="load-msg" style="color:var(--rosso);">Errore di connessione. Riprova.</div>';
-    }
-}
-
-/* ================================================================
-   ADMIN — carica settori e costruisce UI
-================================================================ */
-async function apriAdmin() {
-    mostra('v-admin');
-    popolaBarra('a');
-    if (settoriCaric.length === 0) await caricaSettori();
-    else costruisciGriglia(leggi());
-}
-
-async function caricaSettori() {
-    const url = 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=0&sheet='+encodeURIComponent(SHEET_FOGLIO);
-    try {
-        const raw  = await (await fetch(url)).text();
-        const json = JSON.parse(raw.substring(raw.indexOf("{"), raw.lastIndexOf("}")+1));
-        const rig  = json.table.rows;
-        settoriCaric = [];
-        if (!rig||rig.length<2) return;
-        const nCol = rig[1]?.c?.length||0;
-        for (let i=0;i<nCol;i++) {
-            const num = (rig[1]?.c?.[i]?.v??'').toString().trim();
-            const tit = (rig[2]?.c?.[i]?.v??'').toString().trim();
-            const sub = (rig[3]?.c?.[i]?.v??'').toString().trim();
-            const col = (rig[4]?.c?.[i]?.v??'').toString().trim();
-            if (!tit&&!num) continue;
-            settoriCaric.push({num,titolo:tit,sub,colore:col});
-        }
-        costruisciGriglia(leggi());
-    } catch(e) {
-        document.getElementById('sett-grid').innerHTML='<div class="load-msg" style="color:var(--rosso);">Errore nel caricamento dei settori.</div>';
-    }
-}
-
-function costruisciGriglia(mappa) {
-    const grid = document.getElementById('sett-grid');
-    grid.innerHTML='';
-    if (!settoriCaric.length) { grid.innerHTML='<div class="load-msg">Nessun settore trovato.</div>'; return; }
-
-    settoriCaric.forEach(function(s) {
-        const col     = s.colore||'#0066ff';
-        const emails  = mappa[s.num]||[];
-        const card    = document.createElement('div');
-        card.className='scard'; card.style.borderLeftColor=col; card.dataset.sett=s.num;
-
-        /* intestazione */
-        const hd=document.createElement('div'); hd.className='scard-head';
-        const badge=document.createElement('div'); badge.className='scard-num';
-        badge.textContent=s.num||'—';
-        badge.style.background=sfondo(col); badge.style.color=col;
-        badge.style.border='1px solid '+col+'40';
-        const titDiv=document.createElement('div');
-        titDiv.innerHTML='<p class="scard-tit">'+s.titolo+'</p>'+(s.sub?'<p class="scard-sub">'+s.sub+'</p>':'');
-        hd.appendChild(badge); hd.appendChild(titDiv); card.appendChild(hd);
-
-        /* lista email */
-        const lista=document.createElement('div'); lista.className='email-lista'; lista.id='el-'+s.num;
-        emails.forEach(function(em){ lista.appendChild(creaRiga(em,s.num)); });
-        card.appendChild(lista);
-
-        /* pulsante aggiungi */
-        const btnA=document.createElement('button'); btnA.className='btn-add-email';
-        btnA.innerHTML='<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Aggiungi email';
-        btnA.addEventListener('click',function(){
-            const r=creaRiga('',s.num);
-            document.getElementById('el-'+s.num).appendChild(r);
-            r.querySelector('.email-inp').focus();
-            aggCnt(s.num);
-        });
-        card.appendChild(btnA);
-
-        /* contatore */
-        const cnt=document.createElement('div'); cnt.className='scard-cnt'; cnt.id='cnt-'+s.num;
-        card.appendChild(cnt); grid.appendChild(card); aggCnt(s.num);
-    });
-}
-
-function creaRiga(val, sNum) {
-    const riga=document.createElement('div'); riga.className='email-riga';
-    const inp=document.createElement('input');
-    inp.type='email'; inp.className='email-inp'; inp.placeholder='es. nome@dominio.it'; inp.value=val;
-    if (val) inp.classList.add(emailOk(val)?'ok':'ko');
-    inp.addEventListener('input',function(){
-        this.classList.remove('ok','ko');
-        if (this.value.trim()) this.classList.add(emailOk(this.value)?'ok':'ko');
-        aggCnt(sNum);
-    });
-    inp.addEventListener('blur',function(){ this.value=this.value.trim().toLowerCase(); });
-    const del=document.createElement('button'); del.className='btn-del'; del.title='Rimuovi';
-    del.innerHTML='<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-    del.addEventListener('click',function(){ riga.remove(); aggCnt(sNum); });
-    riga.appendChild(inp); riga.appendChild(del);
-    return riga;
-}
-
-function aggCnt(sNum) {
-    const lista=document.getElementById('el-'+sNum);
-    const cnt=document.getElementById('cnt-'+sNum);
-    if (!lista||!cnt) return;
-    const inputs=lista.querySelectorAll('.email-inp');
-    const valide=Array.from(inputs).filter(i=>emailOk(i.value)).length;
-    const tot=inputs.length;
-    if (!tot) { cnt.textContent='Nessuna email configurata'; cnt.className='scard-cnt'; }
-    else { cnt.textContent=valide===tot?(valide===1?'1 email autorizzata':valide+' email autorizzate'):valide+' valide su '+tot+' inserite'; cnt.className='scard-cnt'+(valide>0?' ok':''); }
-}
-
-function raccogliMappa() {
-    const m={};
-    settoriCaric.forEach(function(s){
-        const lista=document.getElementById('el-'+s.num); if (!lista) return;
-        const em=[...new Set(Array.from(lista.querySelectorAll('.email-inp')).map(i=>i.value.trim().toLowerCase()).filter(emailOk))];
-        m[s.num]=em;
-    });
-    return m;
-}
-
-function mostraToast() {
-    const t=document.getElementById('toast'); t.classList.add('vis');
-    setTimeout(()=>t.classList.remove('vis'),2500);
-}
-
-/* ================================================================
-   LOGIN GOOGLE
-================================================================ */
-function onCredential(resp) {
-    if (!resp.credential) { document.getElementById('msg-err').classList.add('vis'); return; }
-    const pl  = JSON.parse(atob(resp.credential.split('.')[1]));
-    const em  = (pl.email||'').toLowerCase();
-    const nm  = pl.name||em;
-    const pic = pl.picture||null;
-    const sett = verificaEmail(em);
-    if (!sett) { document.getElementById('msg-err').classList.add('vis'); return; }
-    utente       = {email:em, name:nm, picture:pic};
-    settoriVisib = sett;
-    isAdmin      = EMAIL_ADMIN.includes(em);
-    document.getElementById('msg-err').classList.remove('vis');
-    mostra('v-dash');
-    popolaBarra('d');
-    caricaDashboard();
-}
-
-function esci() {
-    if (typeof google!=='undefined'&&google.accounts) {
-        google.accounts.id.revoke(utente?.email||'',()=>{});
-        google.accounts.id.disableAutoSelect();
-    }
-    utente=null; settoriVisib=[]; isAdmin=false; settoriCaric=[];
-    mostra('v-login');
-}
-
-/* ================================================================
-   INIT
-================================================================ */
-window.addEventListener('load',function(){
-    /* Pulsanti esci / navigazione */
-    document.getElementById('btn-esci-d').addEventListener('click', esci);
-    document.getElementById('btn-esci-a').addEventListener('click', esci);
-    document.getElementById('btn-vai-admin').addEventListener('click', apriAdmin);
-    document.getElementById('btn-torna-dash').addEventListener('click',function(){
-        mostra('v-dash'); popolaBarra('d');
-    });
-
-    /* Admin: salva / esporta / importa */
-    document.getElementById('btn-salva').addEventListener('click',function(){
-        salva(raccogliMappa()); mostraToast();
-    });
-    document.getElementById('btn-exp').addEventListener('click',function(){
-        const b=new Blob([JSON.stringify(raccogliMappa(),null,2)],{type:'application/json'});
-        const a=document.createElement('a'); a.href=URL.createObjectURL(b);
-        a.download='fad-autorizzazioni-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
-    });
-    document.getElementById('input-imp').addEventListener('change',function(){
-        if (!this.files[0]) return;
-        const rd=new FileReader();
-        rd.onload=function(e){
-            try {
-                const m=JSON.parse(e.target.result);
-                salva(m); costruisciGriglia(m); mostraToast();
-            } catch(err){ alert('File JSON non valido.'); }
-        };
-        rd.readAsText(this.files[0]); this.value='';
-    });
-
-    /* Google Identity Services */
-    if (typeof google==='undefined'||!google.accounts) return;
-    google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: onCredential,
-        auto_select: false,
-        cancel_on_tap_outside: true
-    });
-    document.getElementById('btn-login').addEventListener('click',function(){
-        document.getElementById('msg-err').classList.remove('vis');
-        google.accounts.id.prompt();
-    });
-});
-</script>
 </body>
 </html>
