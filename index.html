@@ -484,7 +484,11 @@ function renderOggi() {
   ov.innerHTML = '';
 
   const oggi = new Date();
-  const oggiStr = oggi.toISOString().slice(0,10);
+
+  // FIX 1: usa data locale (non UTC) per evitare sfasamento di fuso orario
+  const oggiStr = oggi.getFullYear() + '-'
+    + String(oggi.getMonth()+1).padStart(2,'0') + '-'
+    + String(oggi.getDate()).padStart(2,'0');
 
   // intestazione data
   const intestazione = document.createElement('div');
@@ -535,9 +539,8 @@ function renderOggi() {
   const adesso = new Date();
 
   evOggi.forEach(ev => {
-    // Determina se l'evento è già concluso
     const endDt = ev.end ? new Date(ev.end.dateTime || ev.end.date) : null;
-    const concluso = endDt && endDt < adesso && !!ev.end.dateTime; // solo se ha orario preciso
+    const concluso = endDt && endDt < adesso && !!ev.end.dateTime;
 
     const card = document.createElement('div');
     card.className = 'oggi-card ' + ev._classe;
@@ -549,9 +552,10 @@ function renderOggi() {
     const body = document.createElement('div');
     body.className = 'oggi-card-body';
 
-    const orario = document.createElement('div');
+    // FIX 2: orario dichiarato dentro il blocco if, aggiunto una volta sola
     const tuttoGiorno = isTuttoIlGiorno(ev);
     if (!tuttoGiorno) {
+      const orario = document.createElement('div');
       orario.className = 'oggi-card-orario';
       orario.textContent = fmtOra(ev.start);
       body.appendChild(orario);
@@ -560,8 +564,6 @@ function renderOggi() {
     const titolo = document.createElement('div');
     titolo.className = 'oggi-card-titolo';
     titolo.textContent = ev.summary || '(senza titolo)';
-
-    body.appendChild(orario);
     body.appendChild(titolo);
 
     if (ev.location) {
@@ -731,7 +733,10 @@ function renderGrid() {
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dow     = new Date(currentYear, currentMonth, d).getDay();
-    const isToday = currentYear === today.getFullYear() && currentMonth === today.getMonth() && d === today.getDate();
+    // FIX griglia: confronto con data locale, non UTC
+    const isToday = currentYear === today.getFullYear()
+                 && currentMonth === today.getMonth()
+                 && d === today.getDate();
     const cell    = document.createElement('div');
     cell.className = 'cal-day' + (dow === 0 ? ' domenica' : '') + (isToday ? ' oggi' : '');
 
