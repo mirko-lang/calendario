@@ -4,31 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calendario della Comunità — U.P. Meloncello-Ravone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
-    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-family: 'Lato', system-ui, -apple-system, 'Segoe UI', sans-serif;
     background: transparent;
     overflow: hidden;
+    -webkit-font-smoothing: antialiased;
   }
   :root {
-    /* PALETTE CIANO — colore istituzionale #45818e */
-    --blu: #45818e; --blu-dark: #35646e; --blu-light: #e4eef0;
-    --oro: #c8973a;
-    --verde: #2d7a3a; --arancio: #a33a00; --viola: #c2185b;
-    --grigio: #5a5a5a; --testo: #1c1c1c; --testo-sec: #566468;
-    --bordo: #cbdde0; --radius: 8px;
+    /* PALETTE ISTITUZIONALE — teal #45818e + oro #c8973a */
+    --blu: #45818e; --blu-dark: #2f5a63; --blu-deep: #234850; --blu-light: #edf4f5;
+    --oro: #c8973a; --oro-light: #e8d4a8; --crema: #fdfaf3;
+    --testo: #1b2b2f; --testo-sec: #5d6f74;
+    --bordo: #dce8ea; --radius: 10px;
 
-    /* Bande colorate trasparenti — Oggi e Mese */
-    --bg-festivita:  rgba(200, 151,  58, 0.18);
-    --bg-messe:      rgba( 69, 129, 142, 0.13);
-    --bg-preghiera:  rgba( 31,  78, 121, 0.11);
-    --bg-fraternita: rgba( 91,  33, 182, 0.10);
-    --bg-catechismo: rgba(163,  58,   0, 0.10);
-    --bg-caritas:    rgba( 45, 122,  58, 0.12);
-    --bg-tempo:      rgba(194,  24,  91, 0.10);
-    --bg-info:       rgba( 74,  85,  96, 0.07);
+    /* Sfondi tenui per categoria */
+    --bg-festivita:  #fbf4e4;
+    --bg-messe:      rgba( 69, 129, 142, 0.075);
+    --bg-preghiera:  rgba( 31,  78, 121, 0.070);
+    --bg-fraternita: rgba( 91,  33, 182, 0.060);
+    --bg-catechismo: rgba(163,  58,   0, 0.060);
+    --bg-caritas:    rgba( 45, 122,  58, 0.070);
+    --bg-tempo:      rgba(194,  24,  91, 0.055);
+    --bg-info:       rgba( 74,  85,  96, 0.050);
 
     /* Bordi laterali */
     --brd-festivita:  #c8973a;
@@ -41,342 +44,306 @@
     --brd-info:       #4a5560;
   }
 
-  /* WRAPPER: si adatta a QUALSIASI altezza/larghezza dell'iframe */
+  /* WRAPPER: si adatta a qualsiasi altezza/larghezza dell'iframe */
   #cal-wrapper {
-    width: 100%;
-    height: 100%;
-    background: white;
+    width: 100%; height: 100%;
+    background: #fff;
+    border: 1px solid var(--bordo);
     border-radius: var(--radius);
-    box-shadow: 0 3px 16px rgba(53,100,110,0.14);
+    box-shadow: 0 4px 22px rgba(35,72,80,0.10);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 260px;
+    display: flex; flex-direction: column;
+    min-height: 240px;
   }
 
   /* Scrollbar sottili */
-  #oggi-view, #list-view, #grid-view, #cal-legend { scrollbar-width: thin; scrollbar-color: #b8d1d6 transparent; }
-  #oggi-view::-webkit-scrollbar, #list-view::-webkit-scrollbar, #grid-view::-webkit-scrollbar { width: 7px; height: 7px; }
-  #oggi-view::-webkit-scrollbar-thumb, #list-view::-webkit-scrollbar-thumb, #grid-view::-webkit-scrollbar-thumb { background: #b8d1d6; border-radius: 4px; }
+  #cal-scroll, #cal-legend { scrollbar-width: thin; scrollbar-color: #c3d8dc transparent; }
+  #cal-scroll::-webkit-scrollbar { width: 7px; }
+  #cal-scroll::-webkit-scrollbar-thumb { background: #c3d8dc; border-radius: 4px; }
   #cal-legend::-webkit-scrollbar { height: 0; }
 
-  /* HEADER — compatto */
+  /* ══════════ HEADER ══════════ */
   #cal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--blu); padding: .45rem .7rem; color: white;
-    gap: 8px; flex-shrink: 0; min-width: 0;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: linear-gradient(135deg, var(--blu) 0%, var(--blu-deep) 100%);
+    padding: .5rem .8rem; color: #fff; flex-shrink: 0; min-width: 0;
+    border-bottom: 2px solid var(--oro);
   }
-  .header-title { font-size: 12px; font-weight: 700; letter-spacing: .03em; color: #fff; line-height: 1.15;
-                  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .header-sub   { font-size: 9px; color: rgba(255,255,255,.6); margin-top: 1px; line-height: 1.15;
-                  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #cal-nav { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-  #cal-nav button {
-    background: rgba(255,255,255,.14); border: none; border-radius: 5px;
-    color: white; cursor: pointer; width: 24px; height: 24px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .15s; padding: 0;
+  .header-title {
+    font-size: 12.5px; font-weight: 900; letter-spacing: .11em; text-transform: uppercase;
+    line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  #cal-nav button:hover { background: rgba(255,255,255,.3); }
-  #cal-nav button svg { width: 15px; height: 15px; fill: currentColor; }
-  #cal-month-label { font-size: 11.5px; font-weight: 600; color: #fff; min-width: 96px; text-align: center;
-                     white-space: nowrap; }
+  .header-sub {
+    font-size: 9.5px; font-weight: 300; color: rgba(255,255,255,.72); margin-top: 2px;
+    letter-spacing: .05em; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #cal-nav { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  #cal-nav button.nav-arrow {
+    background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.18);
+    border-radius: 6px; color: #fff; cursor: pointer; width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+    transition: background .15s, border-color .15s;
+  }
+  #cal-nav button.nav-arrow:hover { background: rgba(255,255,255,.30); border-color: rgba(255,255,255,.4); }
+  #cal-nav button.nav-arrow svg { width: 15px; height: 15px; fill: currentColor; }
+  #cal-label {
+    font-size: 11.5px; font-weight: 700; letter-spacing: .03em; color: #fff;
+    min-width: 148px; text-align: center; white-space: nowrap;
+  }
+  #btn-today {
+    background: var(--oro); border: none; border-radius: 20px; color: #fff;
+    font-family: inherit; font-size: 10px; font-weight: 900; letter-spacing: .08em;
+    text-transform: uppercase; cursor: pointer; padding: 5px 12px; margin-left: 4px;
+    transition: filter .15s;
+  }
+  #btn-today:hover { filter: brightness(1.1); }
 
-  /* TOGGLE — compatto */
+  /* ══════════ TOGGLE VISTE ══════════ */
   #view-toggle {
-    display: flex; background: var(--blu-light);
-    border-bottom: 1px solid var(--bordo); padding: 0 .6rem;
-    flex-shrink: 0;
+    display: flex; gap: 2px; background: var(--blu-light);
+    border-bottom: 1px solid var(--bordo); padding: 0 .8rem; flex-shrink: 0;
   }
   #view-toggle button {
-    background: none; border: none; padding: .3rem .7rem;
-    font-size: 11.5px; cursor: pointer; color: var(--testo-sec);
-    border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s;
-    display: flex; align-items: center; gap: 5px; font-family: inherit;
+    background: none; border: none; padding: .38rem .9rem;
+    font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; cursor: pointer; color: var(--testo-sec);
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    display: flex; align-items: center; gap: 6px; transition: color .15s, border-color .15s;
   }
-  #view-toggle button svg { width: 13px; height: 13px; fill: currentColor; opacity: .8; }
-  #view-toggle button.active { color: var(--blu-dark); border-bottom-color: var(--oro); font-weight: 700; }
+  #view-toggle button svg { width: 13px; height: 13px; fill: currentColor; opacity: .75; }
+  #view-toggle button.active { color: var(--blu-deep); border-bottom-color: var(--oro); }
   #view-toggle button.active svg { opacity: 1; }
   #view-toggle button:hover:not(.active) { color: var(--blu-dark); }
 
-  /* CORPO SCROLLABILE */
-  #cal-body { flex: 1 1 0; min-height: 0; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  /* ══════════ CORPO ══════════ */
+  #cal-body { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; position: relative; }
+  #cal-scroll { flex: 1 1 0; min-height: 0; overflow-y: auto; padding: .5rem .75rem .8rem; }
 
-  /* LEGENDA — riga unica, scorrevole, non ruba altezza */
-  #cal-legend {
-    display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 10px;
-    padding: .32rem .7rem; background: #f3f8f9; border-top: 1px solid var(--bordo);
-    font-size: 9.5px; color: var(--testo-sec); flex-shrink: 0; align-items: center;
+  #cal-loading { padding: 1.8rem 1rem; text-align: center; color: var(--testo-sec); font-size: 12px; }
+  .spinner {
+    width: 24px; height: 24px; border: 3px solid var(--blu-light); border-top-color: var(--blu);
+    border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 10px;
   }
-  .legend-item { display: flex; align-items: center; gap: 3px; white-space: nowrap; }
-  .legend-item svg { width: 11px; height: 11px; fill: currentColor; flex-shrink: 0; }
-
-  /* FOOTER */
-  #cal-footer { text-align: center; font-size: 9px; color: rgba(255,255,255,.55); background: var(--blu); padding: .28rem 0; flex-shrink: 0; letter-spacing: .03em; }
-
-  /* LOADING */
-  #cal-loading { padding: 1.6rem 1rem; text-align: center; color: var(--testo-sec); font-size: 12px; }
-  .spinner { width: 24px; height: 24px; border: 3px solid var(--blu-light); border-top-color: var(--blu-dark); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 10px; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Dimensione di sicurezza: un SVG senza width/height si espande al 100% del contenitore */
   .ico { width: 16px; height: 16px; flex-shrink: 0; display: block; }
 
-  /* ══════════════════════════════════════════
-     VISTA OGGI
-  ══════════════════════════════════════════ */
-  #oggi-view { display: none; overflow-y: auto; flex: 1 1 0; min-height: 0; padding: .55rem .6rem .7rem; }
-  .oggi-intestazione {
-    font-size: 11px; font-weight: 700; color: var(--blu-dark);
-    text-transform: uppercase; letter-spacing: .07em;
-    margin-bottom: .5rem; text-align: center;
-    border-bottom: 2px solid var(--oro); padding-bottom: .3rem;
+  /* ══════════ INTESTAZIONE GIORNO ══════════ */
+  .giorno { margin-bottom: .55rem; }
+  .giorno-hdr {
+    display: flex; align-items: center; gap: 8px;
+    padding: 3px 2px 4px; margin-bottom: .35rem;
+    position: sticky; top: -.5rem; background: #fff; z-index: 3;
   }
-  .oggi-nessun { text-align: center; padding: 1.1rem .8rem; color: var(--testo-sec); font-size: 12px; line-height: 1.5; }
-  .oggi-nessun svg { width: 26px; height: 26px; fill: #aec7cb; margin: 0 auto .4rem; display: block; }
+  .giorno-hdr .gh-txt {
+    font-size: 10.5px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--blu-deep); white-space: nowrap;
+  }
+  .giorno-hdr .gh-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--oro-light), transparent); }
+  .giorno.is-oggi .giorno-hdr { background: #fff; }
+  .giorno.is-oggi .gh-badge {
+    background: var(--oro); color: #fff; font-size: 8.5px; font-weight: 900;
+    letter-spacing: .12em; padding: 2px 7px; border-radius: 20px; text-transform: uppercase;
+  }
+  .giorno.is-oggi .gh-txt { color: var(--oro); }
+  .giorno.is-domenica .gh-txt { color: var(--blu); }
 
-  /* FESTIVITÀ — banda compatta sempre in cima */
+  /* Banda festività / liturgia */
   .fest-strip {
-    display: flex; align-items: center; gap: 6px;
-    background: var(--bg-festivita);
-    border-left: 3px solid var(--brd-festivita);
-    border-radius: 5px; padding: .3rem .5rem; margin-bottom: .3rem;
+    display: flex; align-items: center; gap: 7px;
+    background: var(--bg-festivita); border-left: 3px solid var(--brd-festivita);
+    border-radius: 4px; padding: .32rem .55rem; margin-bottom: .28rem;
     cursor: pointer; transition: filter .12s;
   }
-  .fest-strip:hover { filter: brightness(.96); }
-  .fest-strip .ico { width: 15px; height: 15px; color: #a3730c; }
+  .fest-strip:hover { filter: brightness(.975); }
+  .fest-strip .ico { width: 14px; height: 14px; color: var(--oro); }
   .fest-strip .fest-txt {
-    font-size: 12px; font-weight: 700; color: #6d4c07; line-height: 1.25;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;
+    font-size: 12px; font-weight: 700; color: #8a6410; line-height: 1.3; letter-spacing: .01em;
+    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .fest-sep { height: 1px; background: var(--bordo); margin: .45rem 0 .5rem; flex-shrink: 0; }
 
-  .oggi-card {
-    background: white;
-    border: 1px solid var(--bordo);
-    border-left: 4px solid var(--blu);
-    border-radius: 7px;
-    padding: .5rem .6rem;
-    margin-bottom: .4rem;
-    cursor: pointer;
-    transition: box-shadow .15s, transform .1s;
-    display: flex; align-items: center; gap: .6rem;
+  /* ══════════ RIGA EVENTO ══════════ */
+  .ev {
+    display: flex; align-items: stretch; gap: 0;
+    background: #fff; border: 1px solid var(--bordo);
+    border-left: 3px solid var(--blu); border-radius: 5px;
+    margin-bottom: .28rem; cursor: pointer;
+    transition: box-shadow .15s, border-color .15s;
   }
-  .oggi-card:hover { box-shadow: 0 3px 12px rgba(53,100,110,.16); transform: translateY(-1px); }
-  .oggi-card.messe      { border-left-color: var(--brd-messe);      background: var(--bg-messe); }
-  .oggi-card.preghiera  { border-left-color: var(--brd-preghiera);  background: var(--bg-preghiera); }
-  .oggi-card.fraternita { border-left-color: var(--brd-fraternita); background: var(--bg-fraternita); }
-  .oggi-card.catechismo { border-left-color: var(--brd-catechismo); background: var(--bg-catechismo); }
-  .oggi-card.caritas    { border-left-color: var(--brd-caritas);    background: var(--bg-caritas); }
-  .oggi-card.tempo      { border-left-color: var(--brd-tempo);      background: var(--bg-tempo); }
-  .oggi-card.info       { border-left-color: var(--brd-info);       background: var(--bg-info); }
-  .oggi-card.festività  { border-left-color: var(--brd-festivita);  background: var(--bg-festivita); }
+  .ev:hover { box-shadow: 0 2px 10px rgba(35,72,80,.11); }
+  .ev.messe      { border-left-color: var(--brd-messe);      background: var(--bg-messe); }
+  .ev.preghiera  { border-left-color: var(--brd-preghiera);  background: var(--bg-preghiera); }
+  .ev.fraternita { border-left-color: var(--brd-fraternita); background: var(--bg-fraternita); }
+  .ev.catechismo { border-left-color: var(--brd-catechismo); background: var(--bg-catechismo); }
+  .ev.caritas    { border-left-color: var(--brd-caritas);    background: var(--bg-caritas); }
+  .ev.tempo      { border-left-color: var(--brd-tempo);      background: var(--bg-tempo); }
+  .ev.info       { border-left-color: var(--brd-info);       background: var(--bg-info); }
+  .ev.festività  { border-left-color: var(--brd-festivita);  background: var(--bg-festivita); }
 
-  .oggi-card-icon { width: 22px; height: 22px; flex-shrink: 0; }
-  .oggi-card-body { flex: 1; min-width: 0; }
-  .oggi-card-orario { font-size: 15px; font-weight: 800; color: var(--blu-dark); line-height: 1.1; margin-bottom: 1px; }
-  .oggi-card-titolo { font-size: 13px; font-weight: 700; color: var(--testo); line-height: 1.25;
-                      overflow: hidden; text-overflow: ellipsis; }
-  .oggi-card-luogo  { font-size: 10.5px; color: var(--testo-sec); margin-top: 2px; line-height: 1.3;
-                      display: flex; align-items: flex-start; gap: 3px; }
-  .oggi-card-luogo svg { width: 10px; height: 10px; fill: currentColor; margin-top: 2px; flex-shrink: 0; }
-  .luogo-txt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ev-time {
+    flex-shrink: 0; width: 58px; padding: .42rem .3rem .42rem .5rem;
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    border-right: 1px solid rgba(200,151,58,.35);
+  }
+  .ev-time .ora { font-size: 14px; font-weight: 900; color: var(--blu-deep); line-height: 1.05; letter-spacing: -.01em; }
+  .ev-time .ora-fine { font-size: 9.5px; font-weight: 400; color: var(--testo-sec); line-height: 1.2; margin-top: 1px; }
+  .ev-time .tuttogiorno {
+    font-size: 8.5px; font-weight: 900; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--testo-sec); line-height: 1.2;
+  }
+
+  .ev-main { flex: 1; min-width: 0; padding: .42rem .55rem; display: flex; align-items: center; gap: 7px; }
+  .ev-icon { width: 17px; height: 17px; flex-shrink: 0; }
+  .ev-body { flex: 1; min-width: 0; }
+  .ev-title {
+    font-size: 12.5px; font-weight: 700; color: var(--testo); line-height: 1.3;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .ev-meta {
+    font-size: 10px; font-weight: 400; color: var(--testo-sec); margin-top: 2px;
+    line-height: 1.3; display: flex; align-items: center; gap: 4px;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .ev-meta svg { width: 10px; height: 10px; fill: currentColor; flex-shrink: 0; }
+  .ev-meta .meta-txt { overflow: hidden; text-overflow: ellipsis; }
+
+  /* Giorno senza appuntamenti */
+  .giorno-vuoto {
+    font-size: 10.5px; font-weight: 300; font-style: italic; color: #9fb2b6;
+    padding: .3rem .1rem .4rem; letter-spacing: .02em;
+  }
+  .periodo-vuoto {
+    text-align: center; padding: 2rem 1rem; color: var(--testo-sec); font-size: 12.5px; line-height: 1.6;
+  }
+  .periodo-vuoto svg { width: 30px; height: 30px; fill: #c3d8dc; margin: 0 auto .5rem; display: block; }
 
   /* PULSANTE ALLEGATO */
   .att-btn {
     flex-shrink: 0; align-self: stretch; margin-left: auto;
-    display: inline-flex; align-items: center; justify-content: center; flex-direction: column; gap: 1px;
-    padding: 0 10px; border-radius: 6px;
-    background: linear-gradient(135deg,#e8a000,#c8973a); color: #fff; text-decoration: none;
-    cursor: pointer; transition: transform .15s, box-shadow .15s;
-    box-shadow: 0 2px 7px rgba(200,150,0,.35); white-space: nowrap; min-width: 46px;
+    display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    padding: 0 9px; border-radius: 4px; text-decoration: none;
+    background: linear-gradient(135deg,#dba53f,#c8973a); color: #fff;
+    box-shadow: 0 1px 5px rgba(200,151,58,.35); white-space: nowrap; min-width: 42px;
+    transition: filter .15s;
   }
-  .att-btn:hover { transform: scale(1.05); box-shadow: 0 3px 12px rgba(200,150,0,.55); }
-  .att-btn svg { width: 15px; height: 15px; fill: currentColor; }
-  .att-btn span { font-size: 8.5px; font-weight: 800; letter-spacing: .05em; line-height: 1; }
+  .att-btn:hover { filter: brightness(1.08); }
+  .att-btn svg { width: 14px; height: 14px; fill: currentColor; }
+  .att-btn span { font-size: 8px; font-weight: 900; letter-spacing: .06em; line-height: 1; }
 
-  /* ══════════════════════════════════════════
-     VISTA MESE
-  ══════════════════════════════════════════ */
-  #list-view { display: none; overflow-y: auto; flex: 1 1 0; min-height: 0; padding: .5rem .6rem .7rem; }
-  .list-day-group { margin-bottom: .6rem; }
-  .list-day-header {
-    font-size: 12px; font-weight: 800; color: var(--blu-dark);
-    text-transform: uppercase; letter-spacing: .04em;
-    border-bottom: 2px solid var(--blu-light);
-    padding-bottom: 2px; margin-bottom: 4px;
-    position: sticky; top: -.5rem; background: #fff; z-index: 1;
+  /* ══════════ LEGENDA ══════════ */
+  #cal-legend {
+    display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 11px; align-items: center;
+    padding: .35rem .8rem; background: var(--crema);
+    border-top: 1px solid var(--bordo); font-size: 9.5px; color: var(--testo-sec);
+    flex-shrink: 0; letter-spacing: .02em;
   }
-  .list-event {
-    display: flex; align-items: center; gap: 7px; padding: 4px 6px;
-    border-radius: 6px; cursor: pointer; transition: filter .1s; margin-bottom: 3px;
-    border-left: 3px solid transparent;
-  }
-  .list-event:hover { filter: brightness(.95); }
-  .list-event.festività  { border-left-color: var(--brd-festivita);  background: var(--bg-festivita); }
-  .list-event.messe      { border-left-color: var(--brd-messe);      background: var(--bg-messe); }
-  .list-event.preghiera  { border-left-color: var(--brd-preghiera);  background: var(--bg-preghiera); }
-  .list-event.fraternita { border-left-color: var(--brd-fraternita); background: var(--bg-fraternita); }
-  .list-event.catechismo { border-left-color: var(--brd-catechismo); background: var(--bg-catechismo); }
-  .list-event.caritas    { border-left-color: var(--brd-caritas);    background: var(--bg-caritas); }
-  .list-event.tempo      { border-left-color: var(--brd-tempo);      background: var(--bg-tempo); }
-  .list-event.info       { border-left-color: var(--brd-info);       background: var(--bg-info); }
-  .list-event.festività .list-event-title { color: #6d4c07; }
+  .legend-item { display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+  .legend-item svg { width: 11px; height: 11px; fill: currentColor; flex-shrink: 0; }
 
-  .list-event-icon { width: 16px; height: 16px; flex-shrink: 0; }
-  .list-event-body { flex: 1; min-width: 0; }
-  .list-event-orario { font-size: 12px; font-weight: 800; color: var(--blu-dark); line-height: 1.15; }
-  .list-event-title  { font-size: 12px; font-weight: 600; color: var(--testo); line-height: 1.25;
-                       overflow: hidden; text-overflow: ellipsis; }
-  .list-event-luogo  { font-size: 10px; color: var(--testo-sec); margin-top: 1px; line-height: 1.3;
-                       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  /* ══════════════════════════════════════════
-     VISTA GRIGLIA
-  ══════════════════════════════════════════ */
-  #grid-view { display: none; overflow: auto; flex: 1 1 0; min-height: 0; -webkit-overflow-scrolling: touch; }
-  .grid-inner { min-width: 480px; }
-  .cal-weekdays {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    background: var(--blu-light); border-bottom: 1px solid var(--bordo);
-    position: sticky; top: 0; z-index: 2;
+  /* ══════════ FOOTER ══════════ */
+  #cal-footer {
+    text-align: center; font-size: 9px; font-weight: 400; letter-spacing: .09em;
+    text-transform: uppercase; color: rgba(255,255,255,.6);
+    background: var(--blu-deep); padding: .3rem 0; flex-shrink: 0;
   }
-  .cal-weekdays div { text-align: center; padding: .25rem 0; font-size: 9.5px; font-weight: 700;
-                      color: var(--blu-dark); text-transform: uppercase; letter-spacing: .05em; }
-  .cal-weekdays div.domenica { color: var(--oro); }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-  .cal-day { border-right: .5px solid #e2edee; border-bottom: .5px solid #e2edee;
-             min-height: 62px; padding: 3px 3px 2px; position: relative; }
-  .cal-day:nth-child(7n) { border-right: none; }
-  .cal-day.altro-mese { background: #fafcfc; }
-  .cal-day.altro-mese .day-num { color: #b9cacd; }
-  .cal-day.oggi { background: #fff9ee; }
-  .cal-day.oggi .day-num { background: var(--oro); color: white; border-radius: 50%; font-weight: 700; }
-  .cal-day.domenica .day-num { color: var(--oro); font-weight: 600; }
-  .day-num { font-size: 10.5px; color: var(--testo); width: 18px; height: 18px;
-             display: flex; align-items: center; justify-content: center; margin-bottom: 1px; }
-  .day-events { display: flex; flex-direction: column; gap: 1.5px; }
-  .event-pill {
-    font-size: 9px; line-height: 1.35; padding: 1px 3px; border-radius: 3px;
-    color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    cursor: pointer; transition: opacity .1s; display: flex; align-items: center; gap: 3px;
-  }
-  .event-pill:hover { opacity: .82; }
-  .event-pill.continua-sx { border-radius: 0 3px 3px 0; padding-left: 2px; }
-  .event-pill.continua-dx { border-radius: 3px 0 0 3px; padding-right: 2px; }
-  .event-pill.continua-entrambi { border-radius: 0; }
-  .event-pill .ico { width: 9px; height: 9px; }
-  .event-pill span.pill-txt { overflow: hidden; text-overflow: ellipsis; }
-  .event-pill.festività  { background: #b8860b; }
-  .event-pill.messe      { background: var(--blu); }
-  .event-pill.preghiera  { background: #1f4e79; }
-  .event-pill.fraternita { background: #5b21b6; }
-  .event-pill.catechismo { background: var(--arancio); }
-  .event-pill.caritas    { background: var(--verde); }
-  .event-pill.tempo      { background: var(--viola); }
-  .event-pill.info       { background: #4a5560; }
-  .more-events { font-size: 8.5px; color: var(--testo-sec); padding: 0 3px; cursor: pointer; }
 
-  /* POPUP */
-  #popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 998; }
+  /* ══════════ POPUP ══════════ */
+  #popup-overlay { display: none; position: fixed; inset: 0; background: rgba(20,45,50,.42); z-index: 998; }
   #event-popup {
-    display: none; position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%,-50%); background: white; border-radius: 10px;
-    box-shadow: 0 8px 36px rgba(0,0,0,.2); padding: 1rem 1.1rem;
-    z-index: 999; width: 92%; max-width: 340px; border-top: 4px solid var(--blu);
-    max-height: 88%; overflow-y: auto;
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: #fff; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,.25);
+    padding: 1.1rem 1.2rem; z-index: 999; width: 92%; max-width: 350px;
+    border-top: 4px solid var(--oro); max-height: 88%; overflow-y: auto;
   }
-  #event-popup h4 { font-size: 14px; font-weight: 700; color: var(--blu-dark); margin-bottom: .35rem; padding-right: 1.4rem; line-height: 1.3; }
-  .popup-row { font-size: 12px; color: var(--testo-sec); margin-bottom: 2px; line-height: 1.45;
-               display: flex; align-items: flex-start; gap: 5px; }
-  .popup-row svg { width: 12px; height: 12px; fill: currentColor; margin-top: 2px; flex-shrink: 0; }
+  #event-popup h4 {
+    font-size: 15px; font-weight: 900; color: var(--blu-deep); line-height: 1.3;
+    margin-bottom: .5rem; padding-right: 1.5rem;
+  }
+  .popup-row {
+    font-size: 12px; color: var(--testo-sec); margin-bottom: 3px; line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .popup-row svg { width: 12px; height: 12px; fill: currentColor; margin-top: 3px; flex-shrink: 0; }
   .popup-row:empty { display: none; }
-  #popup-close { position: absolute; top: 6px; right: 8px; background: none; border: none; cursor: pointer;
-                 width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
-                 color: var(--testo-sec); border-radius: 5px; }
-  #popup-close:hover { background: #e9f3f4; }
+  #popup-close {
+    position: absolute; top: 7px; right: 9px; background: none; border: none; cursor: pointer;
+    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+    color: var(--testo-sec); border-radius: 5px;
+  }
+  #popup-close:hover { background: var(--blu-light); }
   #popup-close svg { width: 15px; height: 15px; fill: currentColor; }
   .popup-att {
-    display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 6px;
-    background: #e9f3f5; border: 1px solid #b3d0d6; color: #45818e;
-    font-size: 12px; font-weight: 600; text-decoration: none; transition: background .15s;
+    display: flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 5px;
+    background: var(--blu-light); border: 1px solid var(--bordo); color: var(--blu-dark);
+    font-size: 12px; font-weight: 700; text-decoration: none; transition: background .15s;
   }
-  .popup-att:hover { background: #d6e9ec; }
+  .popup-att:hover { background: #dfecee; }
   .popup-att svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
 
-  /* ADATTAMENTO A IFRAME BASSI */
+  /* ══════════ ADATTAMENTI ══════════ */
   @media (max-height: 520px) {
-    .oggi-card { padding: .38rem .5rem; margin-bottom: .3rem; }
-    .oggi-card-orario { font-size: 13.5px; }
-    .oggi-card-titolo { font-size: 12px; }
-    .oggi-card-luogo { display: none; }
-    .oggi-intestazione { font-size: 10px; margin-bottom: .35rem; }
-    .cal-day { min-height: 48px; }
+    .ev-meta { display: none; }
+    .ev-time { width: 52px; }
+    .ev-time .ora { font-size: 13px; }
+    .ev-title { font-size: 12px; }
     #cal-footer { display: none; }
   }
   @media (max-height: 400px) {
     #cal-legend { display: none; }
     .header-sub { display: none; }
   }
-
-  /* ADATTAMENTO A IFRAME STRETTI */
-  @media (max-width: 460px) {
-    #cal-header { padding: .4rem .5rem; }
-    .header-title { font-size: 11px; }
-    #cal-month-label { min-width: 78px; font-size: 10.5px; }
-    #view-toggle button { padding: .3rem .55rem; font-size: 11px; }
+  @media (max-width: 560px) {
+    #cal-header { padding: .45rem .55rem; gap: 6px; }
+    .header-title { font-size: 11px; letter-spacing: .07em; }
+    #cal-label { min-width: 0; font-size: 10.5px; }
+    #btn-today { padding: 4px 9px; font-size: 9px; }
+    #view-toggle button { padding: .35rem .6rem; font-size: 10px; }
     #view-toggle button svg { display: none; }
-    .oggi-card-orario { font-size: 14px; }
-    .oggi-card-titolo { font-size: 12.5px; }
-    .list-day-header { font-size: 11px; }
-    .grid-inner { min-width: 420px; }
+    #cal-scroll { padding: .45rem .5rem .7rem; }
+    .ev-time { width: 50px; padding-left: .4rem; }
+    .ev-time .ora { font-size: 13px; }
+    .ev-title { font-size: 12px; }
+  }
+  @media (max-width: 400px) {
+    .header-sub { display: none; }
+    #cal-nav button.nav-arrow { width: 24px; height: 24px; }
   }
 </style>
 </head>
 <body>
 <div id="cal-wrapper">
 
-  <!-- HEADER FISSO -->
+  <!-- HEADER -->
   <div id="cal-header">
     <div style="min-width:0">
-      <div class="header-title">CALENDARIO DELLA COMUNITÀ</div>
-      <div class="header-sub">Zona Pastorale MERA · Bologna</div>
+      <div class="header-title">Calendario della Comunità</div>
+      <div class="header-sub">Unità Pastorale Meloncello · Ravone</div>
     </div>
     <div id="cal-nav">
-      <button id="btn-prev" title="Mese precedente" aria-label="Mese precedente"></button>
-      <div id="cal-month-label">—</div>
-      <button id="btn-next" title="Mese successivo" aria-label="Mese successivo"></button>
+      <button id="btn-prev" class="nav-arrow" title="Periodo precedente" aria-label="Periodo precedente"></button>
+      <div id="cal-label">—</div>
+      <button id="btn-next" class="nav-arrow" title="Periodo successivo" aria-label="Periodo successivo"></button>
+      <button id="btn-today" title="Torna a oggi">Oggi</button>
     </div>
   </div>
 
-  <!-- TOGGLE FISSO -->
+  <!-- TOGGLE VISTE -->
   <div id="view-toggle">
-    <button id="btn-oggi-btn">Oggi</button>
-    <button id="btn-list">Mese</button>
-    <button id="btn-grid">Griglia</button>
+    <button id="btn-week" class="active">Settimana</button>
+    <button id="btn-month">Mese</button>
   </div>
 
-  <!-- CORPO SCROLLABILE -->
+  <!-- CORPO -->
   <div id="cal-body">
     <div id="cal-loading"><div class="spinner"></div>Caricamento eventi…</div>
-    <div id="oggi-view"></div>
-    <div id="list-view"></div>
-    <div id="grid-view">
-      <div class="grid-inner">
-        <div class="cal-weekdays">
-          <div class="domenica">Dom</div>
-          <div>Lun</div><div>Mar</div><div>Mer</div>
-          <div>Gio</div><div>Ven</div><div>Sab</div>
-        </div>
-        <div class="cal-grid" id="cal-cells"></div>
-      </div>
-    </div>
+    <div id="cal-scroll" style="display:none"></div>
   </div>
 
-  <!-- LEGENDA FISSA (generata da CALENDARI) -->
+  <!-- LEGENDA -->
   <div id="cal-legend"></div>
 
-  <!-- FOOTER FISSO -->
+  <!-- FOOTER -->
   <div id="cal-footer">zonapastoralemera.org</div>
 </div>
 
@@ -389,12 +356,12 @@
   <div class="popup-row" id="popup-time"></div>
   <div class="popup-row" id="popup-loc"></div>
   <div class="popup-row" id="popup-desc"></div>
-  <div id="popup-allegati" style="margin-top:.6rem;display:flex;flex-direction:column;gap:5px;"></div>
+  <div id="popup-allegati" style="margin-top:.7rem;display:flex;flex-direction:column;gap:5px;"></div>
 </div>
 
 <script>
 /* ══════════════════════════════════════════
-   ICONE SVG (sostituiscono le emoji)
+   ICONE SVG
 ══════════════════════════════════════════ */
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const ICONE = {
@@ -412,6 +379,7 @@ const ICONE = {
   'close':      'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
   'luogo':      'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z',
   'orario':     'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z',
+  'settimana':  'M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-1V1h-2zm3 18H5V9h14v10z',
   'data':       'M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5z',
   'file':       'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 18H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z',
   'immagine':   'M21 19V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z',
@@ -419,7 +387,7 @@ const ICONE = {
   'vuoto':      'M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V9h14v10zM7 11h5v5H7z'
 };
 const COLORI = {
-  'info': '#4a5560', 'festività': '#b8860b', 'messe': '#45818e', 'preghiera': '#1f4e79',
+  'info': '#4a5560', 'festività': '#c8973a', 'messe': '#45818e', 'preghiera': '#1f4e79',
   'fraternita': '#5b21b6', 'catechismo': '#a33a00', 'caritas': '#2d7a3a', 'tempo': '#c2185b'
 };
 function icona(nome, classeCss, colore) {
@@ -454,18 +422,95 @@ const CALENDARI = [
   { id: 'c_1941933579b8ca22ba3fae59aa099c265b7b2cb392e16713b236363c51c55660@group.calendar.google.com', nome: 'Tempo libero', classe: 'tempo' },
 ];
 
-const MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-              'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-const GIORNI_LONG = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+const MESI       = ['gennaio','febbraio','marzo','aprile','maggio','giugno',
+                    'luglio','agosto','settembre','ottobre','novembre','dicembre'];
+const MESI_BREVI = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+const GIORNI     = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
 
 const API_KEY = 'AIzaSyBRoKXJaV84XCJezZvsZT33fz_5J2urTKM';
 
-let currentYear  = new Date().getFullYear();
-let currentMonth = new Date().getMonth();
-let allEvents    = [];
-let currentView  = 'oggi';
+let vista     = 'week';        /* 'week' | 'month' */
+let ancora    = new Date();    /* un giorno qualsiasi dentro il periodo mostrato */
+let allEvents = [];
+let richiesta = 0;             /* per scartare risposte obsolete */
 
-/* Legenda + icone pulsanti generate da codice */
+/* ══════════════════════════════════════════
+   UTILITÀ DATE (sempre in orario locale)
+══════════════════════════════════════════ */
+function localStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function toDateStr(dt) {
+  if (!dt) return null;
+  if (dt.date) return dt.date;
+  return localStr(new Date(dt.dateTime));
+}
+function addDaysStr(dateStr, n) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const dd = new Date(y, m-1, d);
+  dd.setDate(dd.getDate() + n);
+  return localStr(dd);
+}
+function inizioSettimana(d) {              /* lunedì */
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+  return x;
+}
+function periodo() {
+  if (vista === 'week') {
+    const s = inizioSettimana(ancora);
+    const e = new Date(s.getFullYear(), s.getMonth(), s.getDate() + 6, 23, 59, 59);
+    return { s, e };
+  }
+  const s = new Date(ancora.getFullYear(), ancora.getMonth(), 1);
+  const e = new Date(ancora.getFullYear(), ancora.getMonth() + 1, 0, 23, 59, 59);
+  return { s, e };
+}
+function etichettaPeriodo() {
+  const { s, e } = periodo();
+  if (vista === 'month') return MESI[s.getMonth()].toUpperCase() + ' ' + s.getFullYear();
+  if (s.getMonth() === e.getMonth()) {
+    return s.getDate() + ' – ' + e.getDate() + ' ' + MESI[s.getMonth()] + ' ' + s.getFullYear();
+  }
+  if (s.getFullYear() === e.getFullYear()) {
+    return s.getDate() + ' ' + MESI_BREVI[s.getMonth()] + ' – ' + e.getDate() + ' ' + MESI_BREVI[e.getMonth()] + ' ' + e.getFullYear();
+  }
+  return s.getDate() + ' ' + MESI_BREVI[s.getMonth()] + ' ' + s.getFullYear() + ' – '
+       + e.getDate() + ' ' + MESI_BREVI[e.getMonth()] + ' ' + e.getFullYear();
+}
+function fmtOra(dt) {
+  if (!dt || !dt.dateTime) return '';
+  return new Date(dt.dateTime).toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
+}
+function fmtDataEstesa(dt) {
+  if (!dt) return '';
+  const d = new Date(dt.dateTime || dt.date);
+  return GIORNI[d.getDay()] + ' ' + d.getDate() + ' ' + MESI[d.getMonth()] + ' ' + d.getFullYear();
+}
+function isTuttoIlGiorno(ev) { return !ev.start.dateTime; }
+function isFestivita(ev)     { return ev._classe === 'festività'; }
+
+function ordinaEventi(arr) {
+  return arr.slice().sort((a, b) => {
+    const fa = isFestivita(a) ? 0 : 1, fb = isFestivita(b) ? 0 : 1;
+    if (fa !== fb) return fa - fb;
+    const ta = !!a.start.dateTime, tb = !!b.start.dateTime;
+    if (ta !== tb) return ta ? -1 : 1;
+    return new Date(a.start.dateTime || a.start.date) - new Date(b.start.dateTime || b.start.date);
+  });
+}
+function eventiDelGiorno(dayStr) {
+  return ordinaEventi(allEvents.filter(ev => {
+    const start = toDateStr(ev.start);
+    let end = toDateStr(ev.end);
+    if (ev.end && ev.end.date) end = addDaysStr(end, -1);
+    return start <= dayStr && dayStr <= end;
+  }));
+}
+
+/* ══════════════════════════════════════════
+   CHROME (legenda, icone, etichette)
+══════════════════════════════════════════ */
 (function initChrome() {
   const leg = document.getElementById('cal-legend');
   CALENDARI.forEach(cal => {
@@ -478,112 +523,61 @@ let currentView  = 'oggi';
   document.getElementById('btn-prev').appendChild(icona('prev'));
   document.getElementById('btn-next').appendChild(icona('next'));
   document.getElementById('popup-close').appendChild(icona('close'));
-  const vt = [['btn-oggi-btn','orario'], ['btn-list','data'], ['btn-grid','vuoto']];
-  vt.forEach(([id, ic]) => {
-    const b = document.getElementById(id);
-    b.insertBefore(icona(ic), b.firstChild);
-  });
+  const b1 = document.getElementById('btn-week');  b1.insertBefore(icona('settimana'), b1.firstChild);
+  const b2 = document.getElementById('btn-month'); b2.insertBefore(icona('data'),      b2.firstChild);
 })();
 
-function updateLabel() {
-  document.getElementById('cal-month-label').textContent = MESI[currentMonth] + ' ' + currentYear;
+function aggiornaEtichette() {
+  document.getElementById('cal-label').textContent = etichettaPeriodo();
+  const p = document.getElementById('btn-prev'), n = document.getElementById('btn-next');
+  if (vista === 'week') {
+    p.title = 'Settimana precedente'; n.title = 'Settimana successiva';
+  } else {
+    p.title = 'Mese precedente'; n.title = 'Mese successivo';
+  }
+  p.setAttribute('aria-label', p.title); n.setAttribute('aria-label', n.title);
 }
 
-function fmtData(dt) {
-  if (!dt) return '';
-  return new Date(dt.dateTime || dt.date)
-    .toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-}
-function fmtOra(dt) {
-  if (!dt || !dt.dateTime) return 'Tutto il giorno';
-  return new Date(dt.dateTime).toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
-}
-function isTuttoIlGiorno(ev) { return !ev.start.dateTime; }
-
-/* Date SEMPRE in orario locale (niente sfasamenti UTC) */
-function localStr(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-function toDateStr(dt) {
-  if (!dt) return null;
-  if (dt.date) return dt.date;
-  return localStr(new Date(dt.dateTime));
-}
-function addDays(dateStr, n) {
-  const [y,m,d] = dateStr.split('-').map(Number);
-  const dd = new Date(y, m-1, d);
-  dd.setDate(dd.getDate() + n);
-  return localStr(dd);
-}
-function cellDateStr(year, month, day) {
-  return year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
-}
-
-/* FESTIVITÀ SEMPRE PER PRIME */
-function isFestivita(ev) { return ev._classe === 'festività'; }
-function ordinaConFestivitaInCima(arr) {
-  return arr.slice().sort((a, b) => {
-    const fa = isFestivita(a) ? 0 : 1, fb = isFestivita(b) ? 0 : 1;
-    if (fa !== fb) return fa - fb;
-    const ta = !!a.start.dateTime, tb = !!b.start.dateTime;
-    if (ta !== tb) return ta ? -1 : 1;
-    return new Date(a.start.dateTime || a.start.date) - new Date(b.start.dateTime || b.start.date);
-  });
-}
-
-/* Navigazione mese */
-document.getElementById('btn-prev').addEventListener('click', () => {
-  currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  updateLabel(); loadEvents();
-});
-document.getElementById('btn-next').addEventListener('click', () => {
-  currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  updateLabel(); loadEvents();
-});
-
+/* ══════════════════════════════════════════
+   CARICAMENTO EVENTI
+══════════════════════════════════════════ */
 async function loadEvents() {
-  document.getElementById('cal-loading').style.display  = 'block';
-  document.getElementById('oggi-view').style.display    = 'none';
-  document.getElementById('grid-view').style.display    = 'none';
-  document.getElementById('list-view').style.display    = 'none';
+  const mio = ++richiesta;
+  document.getElementById('cal-loading').style.display = 'block';
+  document.getElementById('cal-scroll').style.display  = 'none';
 
-  const start = new Date(currentYear, currentMonth, 1).toISOString();
-  const end   = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59).toISOString();
+  const { s, e } = periodo();
+  const timeMin = new Date(s.getFullYear(), s.getMonth(), s.getDate(), 0, 0, 0).toISOString();
+  const timeMax = new Date(e.getFullYear(), e.getMonth(), e.getDate(), 23, 59, 59).toISOString();
+
+  const promises = CALENDARI.map(cal => {
+    const url = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(cal.id) + '/events'
+      + '?key=' + API_KEY
+      + '&timeMin=' + encodeURIComponent(timeMin)
+      + '&timeMax=' + encodeURIComponent(timeMax)
+      + '&singleEvents=true&orderBy=startTime&maxResults=250&supportsAllDrives=true'
+      + '&fields=items(id,summary,description,start,end,location,attachments)';
+    return fetch(url).then(r => r.json()).then(data => {
+      if (data.error) return [];
+      return (data.items || []).map(ev => ({ ...ev, _classe: cal.classe, _calNome: cal.nome }));
+    }).catch(() => []);
+  });
 
   try {
-    const promises = CALENDARI.map(cal => {
-      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events`
-        + `?key=${API_KEY}`
-        + `&timeMin=${encodeURIComponent(start)}`
-        + `&timeMax=${encodeURIComponent(end)}`
-        + `&singleEvents=true&orderBy=startTime&maxResults=250&supportsAllDrives=true`
-        + `&fields=items(id,summary,description,start,end,location,attachments)`;
-      return fetch(url).then(r => r.json()).then(data => {
-        if (data.error) return [];
-        return (data.items || []).map(ev => ({ ...ev, _classe: cal.classe, _calNome: cal.nome }));
-      }).catch(() => []);
-    });
     const results = await Promise.all(promises);
+    if (mio !== richiesta) return;                       /* risposta obsoleta */
     allEvents = results.flat().sort((a,b) =>
-      new Date(a.start.dateTime||a.start.date) - new Date(b.start.dateTime||b.start.date));
-    renderCurrent();
-  } catch(e) {
-    document.getElementById('cal-loading').style.display = 'none';
+      new Date(a.start.dateTime || a.start.date) - new Date(b.start.dateTime || b.start.date));
+  } catch (err) {
+    if (mio !== richiesta) return;
+    allEvents = [];
   }
+  render();
 }
 
-function renderCurrent() {
-  document.getElementById('cal-loading').style.display = 'none';
-  document.getElementById('oggi-view').style.display   = 'none';
-  document.getElementById('grid-view').style.display   = 'none';
-  document.getElementById('list-view').style.display   = 'none';
-
-  if (currentView === 'oggi')  renderOggi();
-  else if (currentView === 'grid') renderGrid();
-  else renderList();
-}
-
-/* Pulsante allegato condiviso */
+/* ══════════════════════════════════════════
+   COSTRUZIONE RIGHE
+══════════════════════════════════════════ */
 function creaBtnAllegato(ev) {
   if (!ev.attachments || !ev.attachments.length) return null;
   const a = document.createElement('a');
@@ -592,310 +586,205 @@ function creaBtnAllegato(ev) {
   a.target = '_blank';
   a.rel = 'noopener';
   const mime = ev.attachments[0].mimeType || '';
-  const nome = mime.includes('image') ? 'immagine' : mime.includes('pdf') ? 'file' : 'allegato';
-  a.appendChild(icona(nome));
+  a.appendChild(icona(mime.includes('image') ? 'immagine' : mime.includes('pdf') ? 'file' : 'allegato'));
   const lbl = document.createElement('span');
   lbl.textContent = 'APRI';
   a.appendChild(lbl);
   a.addEventListener('click', e => e.stopPropagation());
   return a;
 }
-function creaLuogo(testo, clsRiga) {
-  const div = document.createElement('div');
-  div.className = clsRiga;
-  div.appendChild(icona('luogo'));
-  const t = document.createElement('span');
-  t.className = 'luogo-txt';
-  t.textContent = testo;
-  div.appendChild(t);
-  return div;
+
+function creaBandaFestivita(ev) {
+  const s = document.createElement('div');
+  s.className = 'fest-strip';
+  s.appendChild(icona('festività'));
+  const t = document.createElement('div');
+  t.className = 'fest-txt';
+  t.textContent = ev.summary || '(senza titolo)';
+  t.title = ev.summary || '';
+  s.appendChild(t);
+  const att = creaBtnAllegato(ev);
+  if (att) s.appendChild(att);
+  s.addEventListener('click', () => showPopup(ev));
+  return s;
 }
 
-/* ══════════════════════════════════════════
-   VISTA OGGI — festività in cima
-══════════════════════════════════════════ */
-function renderOggi() {
-  const ov = document.getElementById('oggi-view');
-  ov.style.display = 'block';
-  ov.innerHTML = '';
+function creaRigaEvento(ev) {
+  const row = document.createElement('div');
+  row.className = 'ev ' + ev._classe;
 
-  const oggi = new Date();
-  const oggiStr = localStr(oggi);
-
-  const intestazione = document.createElement('div');
-  intestazione.className = 'oggi-intestazione';
-  const giorno = GIORNI_LONG[oggi.getDay()];
-  intestazione.textContent = giorno.charAt(0).toUpperCase() + giorno.slice(1) + ', '
-    + oggi.getDate() + ' ' + MESI[oggi.getMonth()] + ' ' + oggi.getFullYear();
-  ov.appendChild(intestazione);
-
-  if (currentYear !== oggi.getFullYear() || currentMonth !== oggi.getMonth()) {
-    const msg = document.createElement('div');
-    msg.className = 'oggi-nessun';
-    msg.appendChild(icona('data'));
-    msg.appendChild(document.createTextNode('Stai guardando un mese diverso. Gli appuntamenti di oggi si trovano nel mese corrente.'));
-    ov.appendChild(msg);
-    return;
-  }
-
-  const evOggi = allEvents.filter(ev => {
-    const start = toDateStr(ev.start);
-    let end = toDateStr(ev.end);
-    if (ev.end && ev.end.date) end = addDays(end, -1);
-    return start <= oggiStr && oggiStr <= end;
-  });
-
-  const festivita = evOggi.filter(isFestivita);
-  const altri     = ordinaConFestivitaInCima(evOggi.filter(ev => !isFestivita(ev)));
-
-  /* FESTIVITÀ: bande compatte sempre in alto */
-  festivita.forEach(ev => {
-    const s = document.createElement('div');
-    s.className = 'fest-strip';
-    s.appendChild(icona('festività'));
-    const t = document.createElement('div');
-    t.className = 'fest-txt';
-    t.textContent = ev.summary || '(senza titolo)';
-    t.title = ev.summary || '';
-    s.appendChild(t);
-    const att = creaBtnAllegato(ev);
-    if (att) s.appendChild(att);
-    s.addEventListener('click', () => showPopup(ev));
-    ov.appendChild(s);
-  });
-  if (festivita.length && altri.length) {
-    const sep = document.createElement('div');
-    sep.className = 'fest-sep';
-    ov.appendChild(sep);
-  }
-
-  if (!altri.length) {
-    const nessun = document.createElement('div');
-    nessun.className = 'oggi-nessun';
-    nessun.appendChild(icona('vuoto'));
-    nessun.appendChild(document.createTextNode('Nessun appuntamento programmato per oggi.'));
-    ov.appendChild(nessun);
-    return;
-  }
-
-  altri.forEach(ev => {
-    const card = document.createElement('div');
-    card.className = 'oggi-card ' + ev._classe;
-    card.appendChild(iconaEvento(ev, 'oggi-card-icon'));
-
-    const body = document.createElement('div');
-    body.className = 'oggi-card-body';
-
-    if (!isTuttoIlGiorno(ev)) {
-      const orario = document.createElement('div');
-      orario.className = 'oggi-card-orario';
-      orario.textContent = fmtOra(ev.start);
-      body.appendChild(orario);
+  /* colonna orario */
+  const time = document.createElement('div');
+  time.className = 'ev-time';
+  if (isTuttoIlGiorno(ev)) {
+    const tg = document.createElement('div');
+    tg.className = 'tuttogiorno';
+    tg.textContent = 'tutto il giorno';
+    time.appendChild(tg);
+  } else {
+    const ora = document.createElement('div');
+    ora.className = 'ora';
+    ora.textContent = fmtOra(ev.start);
+    time.appendChild(ora);
+    const fine = fmtOra(ev.end);
+    if (fine && fine !== fmtOra(ev.start)) {
+      const of = document.createElement('div');
+      of.className = 'ora-fine';
+      of.textContent = '→ ' + fine;
+      time.appendChild(of);
     }
+  }
+  row.appendChild(time);
 
-    const titolo = document.createElement('div');
-    titolo.className = 'oggi-card-titolo';
-    titolo.textContent = ev.summary || '(senza titolo)';
-    body.appendChild(titolo);
+  /* corpo */
+  const main = document.createElement('div');
+  main.className = 'ev-main';
+  main.appendChild(iconaEvento(ev, 'ev-icon'));
 
-    if (ev.location) body.appendChild(creaLuogo(ev.location, 'oggi-card-luogo'));
+  const body = document.createElement('div');
+  body.className = 'ev-body';
 
-    card.appendChild(body);
-    const att = creaBtnAllegato(ev);
-    if (att) card.appendChild(att);
+  const titolo = document.createElement('div');
+  titolo.className = 'ev-title';
+  titolo.textContent = ev.summary || '(senza titolo)';
+  titolo.title = ev.summary || '';
+  body.appendChild(titolo);
 
-    card.addEventListener('click', () => showPopup(ev));
-    ov.appendChild(card);
-  });
+  const meta = document.createElement('div');
+  meta.className = 'ev-meta';
+  if (ev.location) {
+    meta.appendChild(icona('luogo'));
+    const t = document.createElement('span');
+    t.className = 'meta-txt';
+    t.textContent = ev.location;
+    t.title = ev.location;
+    meta.appendChild(t);
+  } else {
+    const t = document.createElement('span');
+    t.className = 'meta-txt';
+    t.textContent = ev._calNome;
+    meta.appendChild(t);
+  }
+  body.appendChild(meta);
+  main.appendChild(body);
+
+  const att = creaBtnAllegato(ev);
+  if (att) main.appendChild(att);
+
+  row.appendChild(main);
+  row.addEventListener('click', () => showPopup(ev));
+  return row;
+}
+
+function creaBloccoGiorno(data, opzioni) {
+  const dayStr = localStr(data);
+  const oggiStr = localStr(new Date());
+  const eventi = eventiDelGiorno(dayStr);
+  const festivita = eventi.filter(isFestivita);
+  const altri = eventi.filter(ev => !isFestivita(ev));
+
+  if (!opzioni.mostraVuoti && !eventi.length) return null;
+
+  const blocco = document.createElement('div');
+  blocco.className = 'giorno'
+    + (dayStr === oggiStr ? ' is-oggi' : '')
+    + (data.getDay() === 0 ? ' is-domenica' : '');
+  if (dayStr === oggiStr) blocco.id = 'blocco-oggi';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'giorno-hdr';
+  if (dayStr === oggiStr) {
+    const badge = document.createElement('span');
+    badge.className = 'gh-badge';
+    badge.textContent = 'Oggi';
+    hdr.appendChild(badge);
+  }
+  const txt = document.createElement('div');
+  txt.className = 'gh-txt';
+  txt.textContent = GIORNI[data.getDay()] + ' ' + data.getDate() + ' ' + MESI[data.getMonth()];
+  hdr.appendChild(txt);
+  const line = document.createElement('div');
+  line.className = 'gh-line';
+  hdr.appendChild(line);
+  blocco.appendChild(hdr);
+
+  festivita.forEach(ev => blocco.appendChild(creaBandaFestivita(ev)));
+  altri.forEach(ev => blocco.appendChild(creaRigaEvento(ev)));
+
+  if (!eventi.length) {
+    const v = document.createElement('div');
+    v.className = 'giorno-vuoto';
+    v.textContent = 'Nessun appuntamento';
+    blocco.appendChild(v);
+  }
+  return blocco;
 }
 
 /* ══════════════════════════════════════════
-   VISTA MESE — festività in cima ad ogni giorno
+   RENDER
 ══════════════════════════════════════════ */
-function renderList() {
-  const lv = document.getElementById('list-view');
-  lv.style.display = 'block';
-  lv.innerHTML = '';
+function render() {
+  document.getElementById('cal-loading').style.display = 'none';
+  const sc = document.getElementById('cal-scroll');
+  sc.style.display = 'block';
+  sc.innerHTML = '';
+  aggiornaEtichette();
 
-  if (!allEvents.length) {
-    lv.innerHTML = '<p style="font-size:12px;color:#5a5a5a;padding:1.2rem 0;text-align:center">Nessun evento in questo mese.</p>';
+  const { s, e } = periodo();
+  const giorni = Math.round((new Date(e.getFullYear(), e.getMonth(), e.getDate()) - s) / 86400000) + 1;
+  let inseriti = 0;
+
+  for (let i = 0; i < giorni; i++) {
+    const d = new Date(s.getFullYear(), s.getMonth(), s.getDate() + i);
+    const blocco = creaBloccoGiorno(d, { mostraVuoti: vista === 'week' });
+    if (blocco) { sc.appendChild(blocco); inseriti++; }
+  }
+
+  if (!inseriti) {
+    const v = document.createElement('div');
+    v.className = 'periodo-vuoto';
+    v.appendChild(icona('vuoto'));
+    v.appendChild(document.createTextNode(
+      vista === 'week' ? 'Nessun appuntamento in questa settimana.' : 'Nessun appuntamento in questo mese.'));
+    sc.appendChild(v);
     return;
   }
 
-  const oggi = new Date(); oggi.setHours(0,0,0,0);
-  const isMeseCorrente = currentYear === oggi.getFullYear() && currentMonth === oggi.getMonth();
-
-  const grouped = {};
-  const groupOrder = [];
-
-  allEvents.forEach(ev => {
-    const dataEv = new Date(ev.start.dateTime || ev.start.date);
-    dataEv.setHours(0,0,0,0);
-    if (isMeseCorrente && dataEv < oggi) return;
-
-    const key = localStr(dataEv);
-    const label = dataEv.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long' }).toUpperCase();
-
-    if (!grouped[key]) { grouped[key] = { label, events: [] }; groupOrder.push(key); }
-    grouped[key].events.push(ev);
-  });
-
-  if (!groupOrder.length) {
-    lv.innerHTML = '<p style="font-size:12px;color:#5a5a5a;padding:1.2rem 0;text-align:center">Nessun altro evento in questo mese.</p>';
-    return;
-  }
-
-  groupOrder.sort();
-
-  groupOrder.forEach(key => {
-    const { label } = grouped[key];
-    const events = ordinaConFestivitaInCima(grouped[key].events);
-    const grp = document.createElement('div');
-    grp.className = 'list-day-group';
-
-    const hdr = document.createElement('div');
-    hdr.className = 'list-day-header';
-    hdr.textContent = label;
-    grp.appendChild(hdr);
-
-    events.forEach(ev => {
-      const row = document.createElement('div');
-      row.className = 'list-event ' + ev._classe;
-      row.appendChild(iconaEvento(ev, 'list-event-icon'));
-
-      const body = document.createElement('div');
-      body.className = 'list-event-body';
-
-      if (!isTuttoIlGiorno(ev)) {
-        const orario = document.createElement('div');
-        orario.className = 'list-event-orario';
-        orario.textContent = fmtOra(ev.start);
-        body.appendChild(orario);
-      }
-
-      const titolo = document.createElement('div');
-      titolo.className = 'list-event-title';
-      titolo.textContent = ev.summary || '(senza titolo)';
-      body.appendChild(titolo);
-
-      if (ev.location) {
-        const luogo = document.createElement('div');
-        luogo.className = 'list-event-luogo';
-        luogo.textContent = ev.location;
-        luogo.title = ev.location;
-        body.appendChild(luogo);
-      }
-
-      row.appendChild(body);
-      const att = creaBtnAllegato(ev);
-      if (att) row.appendChild(att);
-
-      row.addEventListener('click', () => showPopup(ev));
-      grp.appendChild(row);
-    });
-
-    lv.appendChild(grp);
-  });
+  const oggiEl = document.getElementById('blocco-oggi');
+  if (oggiEl && vista === 'month') sc.scrollTop = Math.max(0, oggiEl.offsetTop - sc.offsetTop - 4);
+  else sc.scrollTop = 0;
 }
 
 /* ══════════════════════════════════════════
-   VISTA GRIGLIA — festività prima pillola
+   NAVIGAZIONE
 ══════════════════════════════════════════ */
-function renderGrid() {
-  document.getElementById('grid-view').style.display = 'block';
-  const cells = document.getElementById('cal-cells');
-  cells.innerHTML = '';
-
-  const firstDay    = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const daysInPrev  = new Date(currentYear, currentMonth, 0).getDate();
-  const today       = new Date();
-
-  function eventsForDay(dayStr) {
-    return ordinaConFestivitaInCima(allEvents.filter(ev => {
-      const start = toDateStr(ev.start);
-      let end = toDateStr(ev.end);
-      if (ev.end && ev.end.date) end = addDays(end, -1);
-      return start <= dayStr && dayStr <= end;
-    }));
+function spostaPeriodo(passo) {
+  if (vista === 'week') {
+    ancora = new Date(ancora.getFullYear(), ancora.getMonth(), ancora.getDate() + 7 * passo);
+  } else {
+    ancora = new Date(ancora.getFullYear(), ancora.getMonth() + passo, 1);
   }
-
-  for (let i = firstDay - 1; i >= 0; i--) {
-    const cell = document.createElement('div');
-    cell.className = 'cal-day altro-mese';
-    cell.innerHTML = `<div class="day-num">${daysInPrev - i}</div>`;
-    cells.appendChild(cell);
-  }
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dow     = new Date(currentYear, currentMonth, d).getDay();
-    const isToday = currentYear === today.getFullYear()
-                 && currentMonth === today.getMonth()
-                 && d === today.getDate();
-    const cell    = document.createElement('div');
-    cell.className = 'cal-day' + (dow === 0 ? ' domenica' : '') + (isToday ? ' oggi' : '');
-
-    const numDiv = document.createElement('div');
-    numDiv.className = 'day-num';
-    numDiv.textContent = d;
-    cell.appendChild(numDiv);
-
-    const dayStr = cellDateStr(currentYear, currentMonth, d);
-    const evs    = eventsForDay(dayStr);
-    const evDiv  = document.createElement('div');
-    evDiv.className = 'day-events';
-
-    evs.slice(0, 3).forEach(ev => {
-      const startStr = toDateStr(ev.start);
-      let endStr = toDateStr(ev.end);
-      if (ev.end && ev.end.date) endStr = addDays(endStr, -1);
-      const isMulti       = startStr !== endStr;
-      const isContinuaSx  = isMulti && dayStr > startStr;
-      const isContinuaDx  = isMulti && dayStr < endStr;
-
-      const pill = document.createElement('div');
-      let extraClass = '';
-      if (isContinuaSx && isContinuaDx) extraClass = ' continua-entrambi';
-      else if (isContinuaSx) extraClass = ' continua-sx';
-      else if (isContinuaDx) extraClass = ' continua-dx';
-      pill.className = 'event-pill ' + ev._classe + extraClass;
-
-      if (!isContinuaSx) {
-        pill.appendChild(iconaEvento(ev));
-        const txt = document.createElement('span');
-        txt.className = 'pill-txt';
-        txt.textContent = ev.summary || '(senza titolo)';
-        pill.appendChild(txt);
-      } else {
-        const txt = document.createElement('span');
-        txt.className = 'pill-txt';
-        txt.textContent = '▸ ' + (ev.summary || '');
-        pill.appendChild(txt);
-      }
-      pill.title = ev.summary || '';
-      pill.addEventListener('click', () => showPopup(ev));
-      evDiv.appendChild(pill);
-    });
-
-    if (evs.length > 3) {
-      const more = document.createElement('div');
-      more.className = 'more-events';
-      more.textContent = '+' + (evs.length - 3) + ' altri';
-      evDiv.appendChild(more);
-    }
-    cell.appendChild(evDiv);
-    cells.appendChild(cell);
-  }
-
-  const totalCells = firstDay + daysInMonth;
-  const remainder  = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-  for (let d = 1; d <= remainder; d++) {
-    const cell = document.createElement('div');
-    cell.className = 'cal-day altro-mese';
-    cell.innerHTML = `<div class="day-num">${d}</div>`;
-    cells.appendChild(cell);
-  }
+  aggiornaEtichette();
+  loadEvents();
 }
+document.getElementById('btn-prev').addEventListener('click', () => spostaPeriodo(-1));
+document.getElementById('btn-next').addEventListener('click', () => spostaPeriodo(1));
+document.getElementById('btn-today').addEventListener('click', () => {
+  ancora = new Date();
+  aggiornaEtichette();
+  loadEvents();
+});
+
+function setVista(nuova) {
+  if (vista === nuova) return;
+  vista = nuova;
+  document.getElementById('btn-week').classList.toggle('active',  vista === 'week');
+  document.getElementById('btn-month').classList.toggle('active', vista === 'month');
+  aggiornaEtichette();
+  loadEvents();
+}
+document.getElementById('btn-week').addEventListener('click',  () => setVista('week'));
+document.getElementById('btn-month').addEventListener('click', () => setVista('month'));
 
 /* ══════════════════════════════════════════
    POPUP
@@ -920,8 +809,9 @@ function showPopup(ev) {
   catTxt.textContent = ev._calNome;
   cat.appendChild(catTxt);
 
-  rigaPopup('popup-date', 'data',   fmtData(ev.start));
-  rigaPopup('popup-time', 'orario', fmtOra(ev.start));
+  rigaPopup('popup-date', 'data',   fmtDataEstesa(ev.start));
+  rigaPopup('popup-time', 'orario', isTuttoIlGiorno(ev) ? 'Tutto il giorno'
+            : fmtOra(ev.start) + (fmtOra(ev.end) ? ' – ' + fmtOra(ev.end) : ''));
   rigaPopup('popup-loc',  'luogo',  ev.location || '');
   rigaPopup('popup-desc', null, ev.description ? ev.description.replace(/<[^>]+>/g,'').substring(0,250) : '');
 
@@ -948,33 +838,6 @@ function hidePopup() {
   document.getElementById('popup-overlay').style.display = 'none';
   document.getElementById('event-popup').style.display   = 'none';
 }
-
-/* ══════════════════════════════════════════
-   PULSANTI VISTA
-══════════════════════════════════════════ */
-function setActiveBtn(id) {
-  ['btn-oggi-btn','btn-list','btn-grid'].forEach(b => document.getElementById(b).classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-document.getElementById('btn-oggi-btn').addEventListener('click', () => {
-  currentView = 'oggi';
-  setActiveBtn('btn-oggi-btn');
-  const now = new Date();
-  if (currentYear !== now.getFullYear() || currentMonth !== now.getMonth()) {
-    currentYear = now.getFullYear(); currentMonth = now.getMonth();
-    updateLabel(); loadEvents();
-  } else {
-    renderCurrent();
-  }
-});
-document.getElementById('btn-list').addEventListener('click', () => {
-  currentView = 'list'; setActiveBtn('btn-list'); renderCurrent();
-});
-document.getElementById('btn-grid').addEventListener('click', () => {
-  currentView = 'grid'; setActiveBtn('btn-grid'); renderCurrent();
-});
-
 document.getElementById('popup-close').addEventListener('click', hidePopup);
 document.getElementById('popup-overlay').addEventListener('click', hidePopup);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') hidePopup(); });
@@ -982,8 +845,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') hidePopup();
 /* ══════════════════════════════════════════
    AVVIO
 ══════════════════════════════════════════ */
-setActiveBtn('btn-oggi-btn');
-updateLabel();
+aggiornaEtichette();
 loadEvents();
 </script>
 </body>
